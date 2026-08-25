@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
+import { useLanguage } from '../../hooks/useLanguage';
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
@@ -11,6 +12,7 @@ const FOCUSABLE =
  * layout's stacking and overflow contexts cannot clip it.
  */
 export default function Modal({ isOpen, onClose, title, description, children }) {
+  const { t } = useLanguage();
   const panelRef = useRef(null);
   const previouslyFocused = useRef(null);
   const titleId = useId();
@@ -99,7 +101,7 @@ export default function Modal({ isOpen, onClose, title, description, children })
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close dialog"
+            aria-label={t('common.closeDialog')}
             className="-m-1 rounded-md p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
           >
             <X className="size-5" aria-hidden="true" />

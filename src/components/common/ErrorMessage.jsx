@@ -1,10 +1,12 @@
 import { RotateCcw, TriangleAlert } from 'lucide-react';
+import { useLanguage } from '../../hooks/useLanguage';
 
 /**
  * Renders an `ApiRequestError`. Field violations from a 400 are listed individually
  * so the user learns which input the API rejected, not just that something failed.
  */
 export default function ErrorMessage({ error, onRetry }) {
+  const { t } = useLanguage();
   if (!error) return null;
 
   const violations = error.violations ?? [];
@@ -36,7 +38,7 @@ export default function ErrorMessage({ error, onRetry }) {
               className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
             >
               <RotateCcw className="size-4" aria-hidden="true" />
-              Try again
+              {t('common.tryAgain')}
             </button>
           )}
         </div>

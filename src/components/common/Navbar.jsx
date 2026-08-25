@@ -1,6 +1,8 @@
 import { Link, NavLink } from 'react-router-dom';
 import { Bike, GitCompareArrows, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useLanguage } from '../../hooks/useLanguage';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const linkClass = ({ isActive }) =>
   [
@@ -12,11 +14,12 @@ const linkClass = ({ isActive }) =>
 
 export default function Navbar() {
   const { isAuthenticated, isAdmin } = useAuth();
+  const { t } = useLanguage();
 
   return (
     <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white/85 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/85">
       <nav
-        aria-label="Main"
+        aria-label={t('nav.mainLabel')}
         className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3"
       >
         <Link
@@ -29,12 +32,12 @@ export default function Navbar() {
 
         <div className="flex items-center gap-1">
           <NavLink to="/" className={linkClass} end>
-            Catalogue
+            {t('nav.catalogue')}
           </NavLink>
           <NavLink to="/compare" className={linkClass}>
             <span className="flex items-center gap-1.5">
               <GitCompareArrows className="size-4" aria-hidden="true" />
-              Compare
+              {t('nav.compare')}
             </span>
           </NavLink>
 
@@ -44,10 +47,14 @@ export default function Navbar() {
             <NavLink to="/admin" className={linkClass}>
               <span className="flex items-center gap-1.5">
                 <ShieldCheck className="size-4" aria-hidden="true" />
-                Admin
+                {t('nav.admin')}
               </span>
             </NavLink>
           )}
+
+          <div className="ml-1">
+            <LanguageSwitcher />
+          </div>
         </div>
       </nav>
     </header>
