@@ -5,6 +5,7 @@ import AdditionalSpecsEditor from './AdditionalSpecsEditor';
 import ImageUploader from './ImageUploader';
 import ErrorMessage from '../common/ErrorMessage';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { useLanguage } from '../../hooks/useLanguage';
 import {
   CHASSIS_FIELDS,
   DIMENSION_FIELDS,
@@ -49,6 +50,7 @@ export default function MotorcycleForm({
   error,
   submitLabel,
 }) {
+  const { t } = useLanguage();
   const [errors, setErrors] = useState({});
   const focusOnNextRender = useRef(false);
 
@@ -77,7 +79,7 @@ export default function MotorcycleForm({
 
   function handleSubmit(event) {
     event.preventDefault();
-    const found = validate(state);
+    const found = validate(state, t);
     setErrors(found);
 
     if (Object.keys(found).length > 0) {
@@ -93,7 +95,7 @@ export default function MotorcycleForm({
     <form onSubmit={handleSubmit} className="space-y-6" noValidate>
       {error && <ErrorMessage error={error} />}
 
-      <Section title="Identity">
+      <Section title={t('admin.form.sectionIdentity')}>
         <div className={grid}>
           {IDENTITY_FIELDS.map((field) => (
             <FormField
@@ -119,7 +121,7 @@ export default function MotorcycleForm({
         </div>
       </Section>
 
-      <Section title="Engine" description="Every field is optional; leave a measurement blank when it is not published.">
+      <Section title={t('admin.form.sectionEngine')} description={t('admin.form.sectionEngineDesc')}>
         <div className={grid}>
           {ENGINE_FIELDS.map((field) => (
             <FormField
@@ -134,7 +136,7 @@ export default function MotorcycleForm({
         </div>
       </Section>
 
-      <Section title="Chassis & brakes">
+      <Section title={t('admin.form.sectionChassis')}>
         <div className={grid}>
           {CHASSIS_FIELDS.map((field) => (
             <FormField
@@ -149,7 +151,7 @@ export default function MotorcycleForm({
         </div>
       </Section>
 
-      <Section title="Dimensions & weight" description="Leaving this block entirely blank clears any dimensions already stored.">
+      <Section title={t('admin.form.sectionDimensions')} description={t('admin.form.sectionDimensionsDesc')}>
         <div className={grid}>
           {DIMENSION_FIELDS.map((field) => (
             <FormField
@@ -164,7 +166,7 @@ export default function MotorcycleForm({
         </div>
       </Section>
 
-      <Section title="Additional specifications">
+      <Section title={t('admin.form.sectionAdditionalSpecs')}>
         <AdditionalSpecsEditor
           entries={state.additionalSpecs}
           error={allErrors.additionalSpecs}
@@ -179,8 +181,12 @@ export default function MotorcycleForm({
           disabled={submitting}
           className="inline-flex items-center gap-2 rounded-lg bg-accent-600 px-5 py-2.5 font-semibold text-white transition-colors hover:bg-accent-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {submitting ? <LoadingSpinner size="sm" label="Saving" /> : <Save className="size-4" aria-hidden="true" />}
-          {submitting ? 'Saving…' : submitLabel}
+          {submitting ? (
+            <LoadingSpinner size="sm" label={t('admin.form.saving')} />
+          ) : (
+            <Save className="size-4" aria-hidden="true" />
+          )}
+          {submitting ? t('admin.form.savingEllipsis') : submitLabel}
         </button>
       </div>
     </form>

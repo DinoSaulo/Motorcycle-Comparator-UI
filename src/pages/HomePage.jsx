@@ -6,6 +6,7 @@ import MotorcycleCard from '../components/common/MotorcycleCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import { useBrands, useMotorcycles } from '../hooks/useMotorcycles';
+import { useLanguage } from '../hooks/useLanguage';
 import {
   CATEGORIES,
   COMPARISON_MAX,
@@ -15,19 +16,20 @@ import { formatCategory, formatDisplayName } from '../utils/formatters';
 
 const PAGE_SIZE = 12;
 
-const SORT_OPTIONS = [
-  { value: 'brand,asc', label: 'Brand (A–Z)' },
-  { value: 'priceEur,asc', label: 'Price (low to high)' },
-  { value: 'priceEur,desc', label: 'Price (high to low)' },
-  { value: 'modelYear,desc', label: 'Newest first' },
-];
-
 const selectClass =
   'rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white';
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const { brands } = useBrands();
+
+  const SORT_OPTIONS = [
+    { value: 'brand,asc', label: t('home.sortBrandAsc') },
+    { value: 'priceEur,asc', label: t('home.sortPriceAsc') },
+    { value: 'priceEur,desc', label: t('home.sortPriceDesc') },
+    { value: 'modelYear,desc', label: t('home.sortNewest') },
+  ];
 
   const [query, setQuery] = useState('');
   const [brand, setBrand] = useState('');
@@ -75,11 +77,10 @@ export default function HomePage() {
     <div className="mx-auto max-w-7xl px-4 py-8">
       <section className="mb-8 text-center">
         <h1 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl dark:text-white">
-          Compare motorcycles, spec by spec
+          {t('home.title')}
         </h1>
         <p className="mx-auto mt-3 max-w-2xl text-zinc-600 dark:text-zinc-400">
-          Pick between {COMPARISON_MIN} and {COMPARISON_MAX} bikes and see engine, chassis and
-          dimension figures lined up side by side.
+          {t('home.subtitle', { min: COMPARISON_MIN, max: COMPARISON_MAX })}
         </p>
 
         <div className="mx-auto mt-6 max-w-2xl">
@@ -87,10 +88,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section aria-label="Filters" className="mb-6 flex flex-wrap items-center gap-3">
+      <section aria-label={t('home.filtersLabel')} className="mb-6 flex flex-wrap items-center gap-3">
         <span className="flex items-center gap-1.5 text-sm font-medium text-zinc-500 dark:text-zinc-400">
           <SlidersHorizontal className="size-4" aria-hidden="true" />
-          Filter
+          {t('home.filter')}
         </span>
 
         <select
@@ -99,10 +100,10 @@ export default function HomePage() {
             setBrand(event.target.value);
             setPage(0);
           }}
-          aria-label="Filter by brand"
+          aria-label={t('home.filterByBrand')}
           className={selectClass}
         >
-          <option value="">All brands</option>
+          <option value="">{t('home.allBrands')}</option>
           {brands.map((name) => (
             <option key={name} value={name}>
               {name}
@@ -116,13 +117,13 @@ export default function HomePage() {
             setCategory(event.target.value);
             setPage(0);
           }}
-          aria-label="Filter by category"
+          aria-label={t('home.filterByCategory')}
           className={selectClass}
         >
-          <option value="">All categories</option>
+          <option value="">{t('home.allCategories')}</option>
           {CATEGORIES.map((value) => (
             <option key={value} value={value}>
-              {formatCategory(value)}
+              {formatCategory(value, t)}
             </option>
           ))}
         </select>
@@ -133,7 +134,7 @@ export default function HomePage() {
             setSort(event.target.value);
             setPage(0);
           }}
-          aria-label="Sort results"
+          aria-label={t('home.sortResults')}
           className={`${selectClass} ml-auto`}
         >
           {SORT_OPTIONS.map((option) => (
@@ -153,7 +154,7 @@ export default function HomePage() {
             }}
             className="text-sm font-medium text-accent-700 hover:underline dark:text-accent-400"
           >
-            Clear filters
+            {t('home.clearFilters')}
           </button>
         )}
       </section>
@@ -166,14 +167,12 @@ export default function HomePage() {
 
       {loading && (
         <div className="flex justify-center py-20">
-          <LoadingSpinner size="lg" label="Loading motorcycles" />
+          <LoadingSpinner size="lg" label={t('home.loadingMotorcycles')} />
         </div>
       )}
 
       {!loading && !error && motorcycles.length === 0 && (
-        <p className="py-20 text-center text-zinc-500 dark:text-zinc-400">
-          No motorcycles match your search.
-        </p>
+        <p className="py-20 text-center text-zinc-500 dark:text-zinc-400">{t('home.noResults')}</p>
       )}
 
       {!loading && motorcycles.length > 0 && (
@@ -193,7 +192,7 @@ export default function HomePage() {
 
           {pageInfo.totalPages > 1 && (
             <nav
-              aria-label="Pagination"
+              aria-label={t('home.pagination')}
               className="mt-8 flex items-center justify-center gap-4 text-sm"
             >
               <button
@@ -202,10 +201,10 @@ export default function HomePage() {
                 disabled={pageInfo.first}
                 className="rounded-lg border border-zinc-300 px-4 py-2 font-medium transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
               >
-                Previous
+                {t('common.previous')}
               </button>
               <span className="numeric text-zinc-600 dark:text-zinc-400">
-                Page {pageInfo.number + 1} of {pageInfo.totalPages}
+                {t('home.pageOf', { current: pageInfo.number + 1, total: pageInfo.totalPages })}
               </span>
               <button
                 type="button"
@@ -213,7 +212,7 @@ export default function HomePage() {
                 disabled={pageInfo.last}
                 className="rounded-lg border border-zinc-300 px-4 py-2 font-medium transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
               >
-                Next
+                {t('common.next')}
               </button>
             </nav>
           )}
@@ -235,7 +234,7 @@ export default function HomePage() {
                   <button
                     type="button"
                     onClick={() => toggleSelection(motorcycle)}
-                    aria-label={`Remove ${formatDisplayName(motorcycle)} from selection`}
+                    aria-label={t('home.removeFromSelection', { name: formatDisplayName(motorcycle) })}
                     className="rounded p-0.5 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-700 dark:hover:bg-zinc-700"
                   >
                     <X className="size-3.5" aria-hidden="true" />
@@ -252,8 +251,8 @@ export default function HomePage() {
             >
               <GitCompareArrows className="size-4" aria-hidden="true" />
               {canCompare
-                ? `Compare ${selected.length}`
-                : `Select ${COMPARISON_MIN - selected.length} more`}
+                ? t('home.compareCount', { count: selected.length })
+                : t('home.selectMore', { count: COMPARISON_MIN - selected.length })}
             </button>
           </div>
         </div>

@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { ImageUp, Trash2 } from 'lucide-react';
 import { resolveImageUrl } from '../../services/api';
 import { IMAGE_CONTENT_TYPES, IMAGE_MAX_BYTES } from '../../services/motorcycleService';
+import { useLanguage } from '../../hooks/useLanguage';
 import LoadingSpinner from '../common/LoadingSpinner';
-
-const EXTENSIONS = 'JPEG, PNG or WebP';
 
 function describeSize(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -30,6 +29,8 @@ export default function ImageUploader({
   disabled,
   busy,
 }) {
+  const { t } = useLanguage();
+  const extensions = t('admin.form.imageFormats');
   const [localError, setLocalError] = useState(null);
   const [pendingPreview, setPendingPreview] = useState(null);
   const [dragging, setDragging] = useState(false);
@@ -46,11 +47,16 @@ export default function ImageUploader({
     setLocalError(null);
 
     if (!IMAGE_CONTENT_TYPES.includes(file.type)) {
-      setLocalError(`Unsupported file type. Choose a ${EXTENSIONS} image.`);
+      setLocalError(t('admin.form.unsupportedType', { formats: extensions }));
       return;
     }
     if (file.size > IMAGE_MAX_BYTES) {
-      setLocalError(`Image is ${describeSize(file.size)}; the limit is ${describeSize(IMAGE_MAX_BYTES)}.`);
+      setLocalError(
+        t('admin.form.tooLarge', {
+          size: describeSize(file.size),
+          limit: describeSize(IMAGE_MAX_BYTES),
+        }),
+      );
       return;
     }
 
@@ -81,7 +87,9 @@ export default function ImageUploader({
 
   return (
     <div>
-      <span className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">Image</span>
+      <span className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+        {t('admin.form.imageLabel')}
+      </span>
 
       <div
         onDragOver={(event) => {
@@ -104,14 +112,16 @@ export default function ImageUploader({
         {preview ? (
           <img
             src={preview}
-            alt="Selected motorcycle"
+            alt={t('admin.form.selectedMotorcycleAlt')}
             className="max-h-44 w-full rounded-lg object-contain"
           />
         ) : (
           <div className="flex flex-col items-center py-4 text-zinc-400">
             <ImageUp className="size-9" aria-hidden="true" />
-            <p className="mt-2 text-sm">Drag an image here, or choose a file</p>
-            <p className="text-xs">{EXTENSIONS}, up to {describeSize(IMAGE_MAX_BYTES)}</p>
+            <p className="mt-2 text-sm">{t('admin.form.dragHint')}</p>
+            <p className="text-xs">
+              {t('admin.form.upToSize', { formats: extensions, size: describeSize(IMAGE_MAX_BYTES) })}
+            </p>
           </div>
         )}
 
@@ -135,7 +145,7 @@ export default function ImageUploader({
             disabled={disabled || busy}
             className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
           >
-            {preview ? 'Replace image' : 'Choose image'}
+            {preview ? t('admin.form.replaceImage') : t('admin.form.chooseImage')}
           </button>
 
           {preview && (
@@ -146,11 +156,11 @@ export default function ImageUploader({
               className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-950/40"
             >
               <Trash2 className="size-4" aria-hidden="true" />
-              Remove
+              {t('admin.form.remove')}
             </button>
           )}
 
-          {busy && <LoadingSpinner size="sm" label="Uploading image" />}
+          {busy && <LoadingSpinner size="sm" label={t('admin.form.uploadingImage')} />}
         </div>
       </div>
 
@@ -162,7 +172,7 @@ export default function ImageUploader({
 
       {pendingPreview && (
         <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-          This image is uploaded once the motorcycle has been created.
+          {t('admin.form.pendingUploadNotice')}
         </p>
       )}
     </div>

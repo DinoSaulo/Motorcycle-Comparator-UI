@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { LockKeyhole } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useLanguage } from '../../hooks/useLanguage';
 import { ADMIN_ROLE } from '../../services/authService';
 import ErrorMessage from '../common/ErrorMessage';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -14,6 +15,7 @@ import LoadingSpinner from '../common/LoadingSpinner';
  */
 export default function LoginForm() {
   const { signIn, signOut } = useAuth();
+  const { t } = useLanguage();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -30,7 +32,7 @@ export default function LoginForm() {
         // Valid credentials, wrong role. Drop the token immediately rather than let the
         // editor account sit on an admin screen where every action returns 403.
         signOut();
-        setError({ message: 'This account does not have administrator permissions.' });
+        setError({ message: t('auth.notAdminError') });
       }
     } catch (err) {
       setError(err);
@@ -48,11 +50,9 @@ export default function LoginForm() {
             <LockKeyhole className="size-6 text-accent-600 dark:text-accent-400" aria-hidden="true" />
           </div>
           <h1 className="mt-4 text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
-            Administrator sign in
+            {t('auth.signInTitle')}
           </h1>
-          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-            Managing the catalogue requires an admin account.
-          </p>
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t('auth.signInSubtitle')}</p>
         </div>
 
         {error && (
@@ -67,7 +67,7 @@ export default function LoginForm() {
               htmlFor="admin-username"
               className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
             >
-              Username
+              {t('auth.username')}
             </label>
             <input
               id="admin-username"
@@ -88,7 +88,7 @@ export default function LoginForm() {
               htmlFor="admin-password"
               className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
             >
-              Password
+              {t('auth.password')}
             </label>
             <input
               id="admin-password"
@@ -108,8 +108,8 @@ export default function LoginForm() {
             disabled={submitting}
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent-600 px-4 py-2.5 font-semibold text-white transition-colors hover:bg-accent-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {submitting && <LoadingSpinner size="sm" label="Signing in" />}
-            {submitting ? 'Signing in…' : 'Sign in'}
+            {submitting && <LoadingSpinner size="sm" label={t('auth.signingIn')} />}
+            {submitting ? t('auth.signingInEllipsis') : t('auth.signIn')}
           </button>
         </form>
       </div>

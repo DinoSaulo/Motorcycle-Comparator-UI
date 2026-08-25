@@ -1,4 +1,5 @@
 import { Plus, Trash2 } from 'lucide-react';
+import { useLanguage } from '../../hooks/useLanguage';
 import {
   ADDITIONAL_SPECS_MAX,
   ADDITIONAL_SPEC_KEY_MAX,
@@ -15,6 +16,7 @@ const inputClass =
  * the same key while being typed; `toPayload` collapses them into a map on submit.
  */
 export default function AdditionalSpecsEditor({ entries, error, onChange, disabled }) {
+  const { t } = useLanguage();
   const update = (index, patch) =>
     onChange(entries.map((entry, i) => (i === index ? { ...entry, ...patch } : entry)));
 
@@ -30,27 +32,27 @@ export default function AdditionalSpecsEditor({ entries, error, onChange, disabl
                 type="text"
                 value={entry.key}
                 onChange={(event) => update(index, { key: event.target.value })}
-                placeholder="Name, e.g. Rider modes"
+                placeholder={t('admin.form.specNamePlaceholder')}
                 maxLength={ADDITIONAL_SPEC_KEY_MAX}
                 disabled={disabled}
-                aria-label={`Specification ${index + 1} name`}
+                aria-label={t('admin.form.specNameAria', { index: index + 1 })}
                 className={`${inputClass} sm:w-1/3`}
               />
               <input
                 type="text"
                 value={entry.value}
                 onChange={(event) => update(index, { value: event.target.value })}
-                placeholder="Value, e.g. 4 (Sport, Road, Rain, Rider)"
+                placeholder={t('admin.form.specValuePlaceholder')}
                 maxLength={ADDITIONAL_SPEC_VALUE_MAX}
                 disabled={disabled}
-                aria-label={`Specification ${index + 1} value`}
+                aria-label={t('admin.form.specValueAria', { index: index + 1 })}
                 className={`${inputClass} flex-1`}
               />
               <button
                 type="button"
                 onClick={() => onChange(entries.filter((_, i) => i !== index))}
                 disabled={disabled}
-                aria-label={`Remove specification ${index + 1}`}
+                aria-label={t('admin.form.removeSpecAria', { index: index + 1 })}
                 className="shrink-0 rounded-lg px-2 text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/40"
               >
                 <Trash2 className="size-4" aria-hidden="true" />
@@ -67,11 +69,11 @@ export default function AdditionalSpecsEditor({ entries, error, onChange, disabl
         className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
       >
         <Plus className="size-4" aria-hidden="true" />
-        Add specification
+        {t('admin.form.addSpecification')}
       </button>
 
       <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-        {entries.length} of {ADDITIONAL_SPECS_MAX} used.
+        {t('admin.form.specsUsed', { count: entries.length, max: ADDITIONAL_SPECS_MAX })}
       </p>
 
       {error && (

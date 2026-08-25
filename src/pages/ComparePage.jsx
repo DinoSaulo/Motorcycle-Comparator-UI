@@ -8,9 +8,11 @@ import Modal from '../components/common/Modal';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import { useComparison, useComparisonSelection } from '../hooks/useMotorcycles';
+import { useLanguage } from '../hooks/useLanguage';
 import { COMPARISON_MAX, COMPARISON_MIN } from '../services/motorcycleService';
 
 export default function ComparePage() {
+  const { t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const { ids, setIds } = useComparisonSelection(searchParams, setSearchParams);
   const { comparison, loading, error } = useComparison(ids);
@@ -43,10 +45,10 @@ export default function ComparePage() {
             className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 transition-colors hover:text-accent-700 dark:text-zinc-400"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
-            Back to catalogue
+            {t('nav.backToCatalogue')}
           </Link>
           <h1 className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl dark:text-white">
-            Comparison
+            {t('compare.title')}
           </h1>
         </div>
 
@@ -56,7 +58,7 @@ export default function ComparePage() {
             onClick={() => setPickerOpen(true)}
             className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
           >
-            Add motorcycle
+            {t('compare.addMotorcycle')}
           </button>
         )}
       </div>
@@ -68,22 +70,22 @@ export default function ComparePage() {
           <GitCompareArrows className="mx-auto size-10 text-zinc-300 dark:text-zinc-600" aria-hidden="true" />
           <h2 className="mt-4 text-lg font-semibold text-zinc-900 dark:text-white">
             {ids.length === 0
-              ? 'Nothing selected yet'
-              : `Add ${needed} more motorcycle${needed === 1 ? '' : 's'}`}
+              ? t('compare.nothingSelected')
+              : t(needed === 1 ? 'compare.addMoreOne' : 'compare.addMoreMany', { count: needed })}
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-zinc-500 dark:text-zinc-400">
-            A comparison needs between {COMPARISON_MIN} and {COMPARISON_MAX} motorcycles.
+            {t('compare.needRange', { min: COMPARISON_MIN, max: COMPARISON_MAX })}
           </p>
 
           <div className="mx-auto mt-6 max-w-md">
-            <SearchBar onSelect={addMotorcycle} placeholder="Search for a motorcycle…" autoFocus />
+            <SearchBar onSelect={addMotorcycle} placeholder={t('compare.searchPlaceholder')} autoFocus />
           </div>
         </div>
       )}
 
       {loading && (
         <div className="flex justify-center py-20">
-          <LoadingSpinner size="lg" label="Building comparison" />
+          <LoadingSpinner size="lg" label={t('compare.loadingComparison')} />
         </div>
       )}
 
@@ -104,12 +106,14 @@ export default function ComparePage() {
       <Modal
         isOpen={isPickerOpen}
         onClose={() => setPickerOpen(false)}
-        title="Add a motorcycle"
-        description={`${remaining} slot${remaining === 1 ? '' : 's'} left in this comparison.`}
+        title={t('compare.addModalTitle')}
+        description={t(remaining === 1 ? 'compare.slotsLeftOne' : 'compare.slotsLeftMany', {
+          count: remaining,
+        })}
       >
-        <SearchBar onSelect={addMotorcycle} placeholder="Search by brand, model or slug…" autoFocus />
+        <SearchBar onSelect={addMotorcycle} placeholder={t('search.placeholder')} autoFocus />
         <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
-          Start typing to see suggestions, then use the arrow keys and Enter to pick one.
+          {t('compare.typeToSeeSuggestions')}
         </p>
       </Modal>
     </div>

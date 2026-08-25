@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Gauge, Pencil, Trash2 } from 'lucide-react';
 import { resolveImageUrl } from '../../services/api';
+import { useLanguage } from '../../hooks/useLanguage';
 import {
   formatCategory,
   formatCurrency,
@@ -9,17 +10,19 @@ import {
 } from '../../utils/formatters';
 
 export default function AdminMotorcycleTable({ motorcycles, onDelete, busyId }) {
+  const { t } = useLanguage();
+
   return (
     <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
       <table className="w-full min-w-3xl text-left text-sm">
         <thead className="bg-zinc-50 text-xs uppercase tracking-wide text-zinc-500 dark:bg-zinc-800/70">
           <tr>
-            <th scope="col" className="px-4 py-3 font-semibold">Motorcycle</th>
-            <th scope="col" className="px-4 py-3 font-semibold">Category</th>
-            <th scope="col" className="px-4 py-3 font-semibold">Year</th>
-            <th scope="col" className="px-4 py-3 font-semibold">Engine</th>
-            <th scope="col" className="px-4 py-3 font-semibold">Price</th>
-            <th scope="col" className="px-4 py-3 text-right font-semibold">Actions</th>
+            <th scope="col" className="px-4 py-3 font-semibold">{t('admin.colMotorcycle')}</th>
+            <th scope="col" className="px-4 py-3 font-semibold">{t('admin.colCategory')}</th>
+            <th scope="col" className="px-4 py-3 font-semibold">{t('admin.colYear')}</th>
+            <th scope="col" className="px-4 py-3 font-semibold">{t('admin.colEngine')}</th>
+            <th scope="col" className="px-4 py-3 font-semibold">{t('admin.colPrice')}</th>
+            <th scope="col" className="px-4 py-3 text-right font-semibold">{t('admin.colActions')}</th>
           </tr>
         </thead>
 
@@ -56,7 +59,7 @@ export default function AdminMotorcycleTable({ motorcycles, onDelete, busyId }) 
                 </td>
 
                 <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">
-                  {formatCategory(motorcycle.category)}
+                  {formatCategory(motorcycle.category, t)}
                 </td>
                 <td className="numeric px-4 py-3 text-zinc-600 dark:text-zinc-300">
                   {motorcycle.modelYear}
@@ -72,7 +75,7 @@ export default function AdminMotorcycleTable({ motorcycles, onDelete, busyId }) 
                   <div className="flex items-center justify-end gap-1">
                     <Link
                       to={`/admin/motorcycles/${motorcycle.id}`}
-                      aria-label={`Edit ${name}`}
+                      aria-label={t('admin.editLabel', { name })}
                       className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-white"
                     >
                       <Pencil className="size-4" aria-hidden="true" />
@@ -81,7 +84,7 @@ export default function AdminMotorcycleTable({ motorcycles, onDelete, busyId }) 
                       type="button"
                       onClick={() => onDelete(motorcycle)}
                       disabled={busy}
-                      aria-label={`Delete ${name}`}
+                      aria-label={t('admin.deleteLabel', { name })}
                       className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:opacity-40 dark:hover:bg-red-950/40 dark:hover:text-red-400"
                     >
                       <Trash2 className="size-4" aria-hidden="true" />

@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Trophy } from 'lucide-react';
 import { EMPTY_VALUE } from '../../utils/formatters';
+import { useLanguage } from '../../hooks/useLanguage';
 
 /**
  * One specification line across every compared motorcycle.
@@ -13,6 +14,7 @@ import { EMPTY_VALUE } from '../../utils/formatters';
  *  - `winnerIndexes` is empty when the spec is not rankable or everything ties.
  */
 function SpecRow({ row, columnCount }) {
+  const { t } = useLanguage();
   const winners = new Set(row.winnerIndexes ?? []);
   // Highlighting every column when they all tie is just noise.
   const showWinners = winners.size > 0 && winners.size < columnCount;
@@ -49,7 +51,7 @@ function SpecRow({ row, columnCount }) {
                 <>
                   <Trophy className="size-3.5 shrink-0" aria-hidden="true" />
                   {/* Colour alone must not carry the meaning. */}
-                  <span className="sr-only">Best value</span>
+                  <span className="sr-only">{t('common.bestValue')}</span>
                 </>
               )}
             </span>

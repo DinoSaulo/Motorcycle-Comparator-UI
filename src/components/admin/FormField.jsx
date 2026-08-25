@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import { formatCategory } from '../../utils/formatters';
+import { useLanguage } from '../../hooks/useLanguage';
 
 const inputClass =
   'w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white';
@@ -12,6 +13,7 @@ const inputClass =
  * Conversion to numbers or nulls happens once, in `toPayload`.
  */
 export default function FormField({ field, value, error, onChange, disabled }) {
+  const { t } = useLanguage();
   const id = useId();
   const describedBy = error ? `${id}-error` : undefined;
 
@@ -30,7 +32,7 @@ export default function FormField({ field, value, error, onChange, disabled }) {
   return (
     <div className={field.full ? 'sm:col-span-2 lg:col-span-3' : undefined}>
       <label htmlFor={id} className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-        {field.label}
+        {t(field.labelKey)}
         {field.unit && <span className="ml-1 text-xs font-normal text-zinc-400">({field.unit})</span>}
         {field.required && (
           <span className="ml-0.5 text-red-600" aria-hidden="true">
@@ -41,10 +43,10 @@ export default function FormField({ field, value, error, onChange, disabled }) {
 
       {field.type === 'select' && (
         <select {...common}>
-          <option value="">Select…</option>
+          <option value="">{t('common.select')}</option>
           {field.options.map((option) => (
             <option key={option} value={option}>
-              {formatCategory(option)}
+              {formatCategory(option, t)}
             </option>
           ))}
         </select>

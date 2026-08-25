@@ -7,6 +7,7 @@ import LoginForm from '../components/admin/LoginForm';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import { useAuth } from '../hooks/useAuth';
+import { useLanguage } from '../hooks/useLanguage';
 import {
   createMotorcycle,
   deleteMotorcycleImage,
@@ -35,6 +36,7 @@ export default function AdminMotorcycleFormPage() {
 function FormScreen({ id, isEditing }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
   const [state, setState] = useState(emptyFormState);
   const [loading, setLoading] = useState(isEditing);
   const [submitting, setSubmitting] = useState(false);
@@ -43,7 +45,7 @@ function FormScreen({ id, isEditing }) {
   // admin lands on the saved record already knowing only the image needs another try.
   const [error, setError] = useState(
     location.state?.imageError
-      ? { message: `The motorcycle was created, but its image failed to upload: ${location.state.imageError}` }
+      ? { message: t('admin.form.imageUploadFailed', { reason: location.state.imageError }) }
       : null,
   );
   // Held until the motorcycle exists: the upload endpoint is addressed by id.
@@ -134,7 +136,7 @@ function FormScreen({ id, isEditing }) {
   if (loading) {
     return (
       <div className="flex justify-center py-24">
-        <LoadingSpinner size="lg" label="Loading motorcycle" />
+        <LoadingSpinner size="lg" label={t('admin.form.loadingMotorcycle')} />
       </div>
     );
   }
@@ -145,7 +147,7 @@ function FormScreen({ id, isEditing }) {
       <div className="mx-auto max-w-2xl px-4 py-16">
         <ErrorMessage error={error} />
         <Link to="/admin" className="mt-6 inline-block text-sm font-medium text-accent-700">
-          Back to administration
+          {t('admin.form.backToAdministration')}
         </Link>
       </div>
     );
@@ -159,14 +161,14 @@ function FormScreen({ id, isEditing }) {
           className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 transition-colors hover:text-accent-700 dark:text-zinc-400"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
-          Back to administration
+          {t('admin.form.backToAdministration')}
         </Link>
         <h1 className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl dark:text-white">
-          {isEditing ? 'Edit motorcycle' : 'New motorcycle'}
+          {isEditing ? t('admin.form.editMotorcycle') : t('admin.form.newMotorcycle')}
         </h1>
         {isEditing && (
           <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-            Saving replaces the whole record — a field left blank is cleared.
+            {t('admin.form.fullReplacementNotice')}
           </p>
         )}
       </div>
@@ -181,7 +183,7 @@ function FormScreen({ id, isEditing }) {
         submitting={submitting}
         imageBusy={imageBusy}
         error={error}
-        submitLabel={isEditing ? 'Save changes' : 'Create motorcycle'}
+        submitLabel={isEditing ? t('admin.form.saveChanges') : t('admin.form.createMotorcycle')}
       />
     </div>
   );

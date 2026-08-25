@@ -1,4 +1,5 @@
 import { formatCategory, formatDisplayName, formatEngineSize } from '../../utils/formatters';
+import { useLanguage } from '../../hooks/useLanguage';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 /**
@@ -14,25 +15,26 @@ export default function AutocompleteDropdown({
   onSelect,
   optionId,
 }) {
+  const { t } = useLanguage();
   const hasResults = options.length > 0;
 
   return (
     <ul
       id={id}
       role="listbox"
-      aria-label="Motorcycle suggestions"
+      aria-label={t('search.suggestionsLabel')}
       className="absolute inset-x-0 top-full z-20 mt-2 max-h-80 overflow-y-auto rounded-xl border border-zinc-200 bg-white py-1 shadow-xl dark:border-zinc-700 dark:bg-zinc-900"
     >
       {loading && !hasResults && (
         <li className="flex items-center gap-2 px-4 py-3 text-sm text-zinc-500">
-          <LoadingSpinner size="sm" label="Searching" />
-          <span aria-hidden="true">Searching…</span>
+          <LoadingSpinner size="sm" label={t('search.searching')} />
+          <span aria-hidden="true">{t('search.searchingEllipsis')}</span>
         </li>
       )}
 
       {!loading && !hasResults && (
         <li className="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400">
-          No motorcycles match “{query}”.
+          {t('search.noMatches', { query })}
         </li>
       )}
 
@@ -60,7 +62,7 @@ export default function AutocompleteDropdown({
                 {formatDisplayName(motorcycle)}
               </span>
               <span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
-                {formatCategory(motorcycle.category)} · {motorcycle.modelYear}
+                {formatCategory(motorcycle.category, t)} · {motorcycle.modelYear}
               </span>
             </span>
             <span className="numeric shrink-0 text-xs text-zinc-500 dark:text-zinc-400">

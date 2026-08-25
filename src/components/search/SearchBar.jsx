@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useMotorcycles } from '../../hooks/useMotorcycles';
+import { useLanguage } from '../../hooks/useLanguage';
 import AutocompleteDropdown from './AutocompleteDropdown';
 
 const SUGGESTION_COUNT = 6;
@@ -12,12 +13,9 @@ const SUGGESTION_COUNT = 6;
  * `onSelect` receives a full motorcycle when a suggestion is chosen; `onQueryChange`
  * reports the debounced term so a parent can filter its own grid alongside.
  */
-export default function SearchBar({
-  onSelect,
-  onQueryChange,
-  placeholder = 'Search by brand, model or slug…',
-  autoFocus = false,
-}) {
+export default function SearchBar({ onSelect, onQueryChange, placeholder, autoFocus = false }) {
+  const { t } = useLanguage();
+  const resolvedPlaceholder = placeholder ?? t('search.placeholder');
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -115,8 +113,8 @@ export default function SearchBar({
           onFocus={() => setIsOpen(true)}
           onBlur={() => setIsOpen(false)}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          aria-label="Search motorcycles"
+          placeholder={resolvedPlaceholder}
+          aria-label={t('search.inputLabel')}
           aria-controls={showDropdown ? listboxId : undefined}
           aria-activedescendant={activeIndex >= 0 ? optionId(activeIndex) : undefined}
           aria-autocomplete="list"
@@ -128,7 +126,7 @@ export default function SearchBar({
           <button
             type="button"
             onClick={clear}
-            aria-label="Clear search"
+            aria-label={t('search.clear')}
             className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800"
           >
             <X className="size-4" aria-hidden="true" />
@@ -151,7 +149,9 @@ export default function SearchBar({
       {/* Result counts are announced without stealing focus from the input. */}
       <span role="status" aria-live="polite" className="sr-only">
         {showDropdown && !loading
-          ? `${suggestions.length} suggestion${suggestions.length === 1 ? '' : 's'} available`
+          ? t(suggestions.length === 1 ? 'search.suggestionSingular' : 'search.suggestionPlural', {
+              count: suggestions.length,
+            })
           : ''}
       </span>
     </div>
