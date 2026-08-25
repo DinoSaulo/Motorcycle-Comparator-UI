@@ -1,0 +1,26 @@
+{
+  "name": "motorcycle-comparison-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Web client for the Motorcycle Comparator API: browse the catalogue and compare motorcycles side by side.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.19.0",
+    "lucide-react": "^1.34.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^6.1.0",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.2.2"
+  }
+}
