@@ -73,6 +73,11 @@ export default {
     selected: 'Selecionada',
   },
 
+  motorcycleDetail: {
+    loading: 'Carregando moto',
+    startComparison: 'Iniciar uma comparação',
+  },
+
   compare: {
     removeFromComparison: 'Remover {{name}} da comparação',
     addToComparison: 'Adicionar {{name}} à comparação',
@@ -244,6 +249,70 @@ export default {
     priceMustBePositive: 'O preço deve ser maior que zero',
     tooManyAdditionalSpecs: 'No máximo {{max}} especificações adicionais',
     additionalSpecNeedsName: 'Toda especificação adicional precisa de um nome',
+  },
+
+  /**
+   * Exact-match translations for the fixed English strings the comparison endpoint's
+   * `ComparisonService.GROUPS` registry hardcodes as group names and spec labels —
+   * see `utils/formatters.js`'s `translateSpecLabel`. Keys are the literal backend
+   * text, not identifiers, so they must stay byte-for-byte in sync with that registry.
+   */
+  specLabels: {
+    // Group names
+    Overview: 'Visão geral',
+    Engine: 'Motor',
+    Performance: 'Desempenho',
+    Transmission: 'Transmissão',
+    'Chassis & brakes': 'Chassi e freios',
+    'Dimensions & weight': 'Dimensões e peso',
+    'Other specifications': 'Outras especificações',
+    // Overview
+    Brand: 'Marca',
+    Model: 'Modelo',
+    'Model year': 'Ano do modelo',
+    Category: 'Categoria',
+    Price: 'Preço',
+    // Engine
+    'Engine type': 'Tipo de motor',
+    Displacement: 'Cilindrada',
+    Cylinders: 'Cilindros',
+    'Valves per cylinder': 'Válvulas por cilindro',
+    Bore: 'Diâmetro do cilindro',
+    Stroke: 'Curso do pistão',
+    'Compression ratio': 'Taxa de compressão',
+    Cooling: 'Arrefecimento',
+    'Fuel system': 'Sistema de alimentação',
+    'Emission standard': 'Norma de emissão',
+    // Performance
+    'Max power': 'Potência máxima',
+    'Power peak': 'Pico de potência',
+    'Max torque': 'Torque máximo',
+    'Torque peak': 'Pico de torque',
+    'Top speed': 'Velocidade máxima',
+    'Fuel consumption': 'Consumo de combustível',
+    // Transmission (group name above doubles as the "Transmission" row label)
+    Gears: 'Marchas',
+    'Final drive': 'Transmissão final',
+    // Chassis & brakes
+    Frame: 'Quadro',
+    'Front suspension': 'Suspensão dianteira',
+    'Rear suspension': 'Suspensão traseira',
+    'Front brake': 'Freio dianteiro',
+    'Rear brake': 'Freio traseiro',
+    ABS: 'ABS',
+    'Front tyre': 'Pneu dianteiro',
+    'Rear tyre': 'Pneu traseiro',
+    // Dimensions & weight
+    Length: 'Comprimento',
+    Width: 'Largura',
+    Height: 'Altura',
+    Wheelbase: 'Distância entre eixos',
+    'Seat height': 'Altura do assento',
+    'Ground clearance': 'Distância ao solo',
+    'Kerb weight': 'Peso em ordem de marcha',
+    'Dry weight': 'Peso seco',
+    'Fuel capacity': 'Capacidade do tanque',
+    Payload: 'Capacidade de carga',
   },
 
   categories: {

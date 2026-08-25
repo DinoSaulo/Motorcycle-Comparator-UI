@@ -7,6 +7,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import HomePage from '../pages/HomePage';
 
 const ComparePage = lazy(() => import('../pages/ComparePage'));
+const MotorcycleDetailPage = lazy(() => import('../pages/MotorcycleDetailPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 // The admin bundle carries the whole edit form and never loads for a normal visitor.
 const AdminPage = lazy(() => import('../pages/AdminPage'));
@@ -23,6 +24,7 @@ export default function AppRoutes() {
     >
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/motorcycles/:id" element={<MotorcycleDetailPage />} />
         <Route path="/compare" element={<ComparePage />} />
         {/* Each admin screen gates itself on the session, so there is no separate
             login route to bookmark or get redirected back from. */}

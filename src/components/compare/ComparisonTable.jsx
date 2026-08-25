@@ -3,15 +3,17 @@ import { Gauge, X } from 'lucide-react';
 import SpecRow from './SpecRow';
 import { resolveImageUrl } from '../../services/api';
 import { useLanguage } from '../../hooks/useLanguage';
-import { formatCategory, formatCurrency, formatDisplayName } from '../../utils/formatters';
+import { formatCategory, formatCurrency, formatDisplayName, translateSpecLabel } from '../../utils/formatters';
 
 /**
  * Renders the comparison exactly as the API shaped it: groups in order, rows in order.
- * `group.name`, `row.label` and `row.unit` come straight from the backend and are not
- * translated client-side — the comparison endpoint owns them.
+ * `group.name` and `row.label` come straight from the backend, which decides content,
+ * order and grouping — this only decides how those fixed English strings are *displayed*,
+ * translating them client-side via `translateSpecLabel` (falls through untouched for any
+ * label it doesn't recognise, e.g. an admin's free-form "Other specifications" key).
  *
- * The only client-side transformation is the "differences only" filter, which leans on
- * the `differing` flag the backend already computes per row.
+ * The only other client-side transformation is the "differences only" filter, which
+ * leans on the `differing` flag the backend already computes per row.
  */
 export default function ComparisonTable({ comparison, onRemove }) {
   const { t } = useLanguage();
@@ -54,7 +56,10 @@ export default function ComparisonTable({ comparison, onRemove }) {
 
       {/* Horizontal scrolling is contained here so the page body never scrolls sideways. */}
       <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-        <table className="w-full min-w-3xl border-collapse text-left">
+        {/* table-fixed pins every column to the width declared on its <th> here, so a
+            long value further down a row (or a short one) can never widen or narrow a
+            column — which is what let the two photos above render at different sizes. */}
+        <table className="w-full min-w-3xl table-fixed border-collapse text-left">
           <caption className="sr-only">{t('compare.tableCaption', { count: columnCount })}</caption>
 
           <thead>
@@ -70,7 +75,7 @@ export default function ComparisonTable({ comparison, onRemove }) {
                 <th
                   key={motorcycle.id}
                   scope="col"
-                  className="min-w-52 bg-zinc-50 p-4 align-top dark:bg-zinc-800/80"
+                  className="w-52 bg-zinc-50 p-4 align-top dark:bg-zinc-800/80"
                 >
                   <div className="flex flex-col gap-2">
                     <div className="aspect-16/10 overflow-hidden rounded-lg bg-zinc-200 dark:bg-zinc-700">
@@ -126,7 +131,7 @@ export default function ComparisonTable({ comparison, onRemove }) {
                   colSpan={columnCount + 1}
                   className="bg-zinc-100 px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
                 >
-                  {group.name}
+                  {translateSpecLabel(group.name, t)}
                 </th>
               </tr>
 

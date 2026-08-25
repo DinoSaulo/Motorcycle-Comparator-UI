@@ -76,6 +76,25 @@ export function formatCategory(category, t) {
     .join(' ');
 }
 
+/**
+ * Translates a spec label or group name from the comparison endpoint — e.g. `"Model
+ * year"`, `"Chassis & brakes"` — against `specLabels.*`. These are fixed English
+ * strings hardcoded in the backend's `ComparisonService` (not a field name or an
+ * enum, just display text it decided on), so the lookup is keyed by the exact string
+ * rather than a camelCase key like `fields.*` uses for the admin form's own labels.
+ *
+ * Falls back to the original text when there is no matching entry — which is also
+ * the correct behaviour for English (no `specLabels.*` needed there, the backend
+ * string already *is* the English label) and for admin-authored "Other
+ * specifications" keys, which must never be mistaken for one of these fixed labels.
+ */
+export function translateSpecLabel(text, t) {
+  if (isBlank(text) || !t) return text;
+  const key = `specLabels.${text}`;
+  const translated = t(key);
+  return translated === key ? text : translated;
+}
+
 /** Falls back to brand + model when the API has no explicit display name. */
 export function formatDisplayName(motorcycle) {
   if (!motorcycle) return EMPTY_VALUE;

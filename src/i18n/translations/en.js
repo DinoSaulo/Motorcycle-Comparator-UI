@@ -74,6 +74,11 @@ export default {
     selected: 'Selected',
   },
 
+  motorcycleDetail: {
+    loading: 'Loading motorcycle',
+    startComparison: 'Start a comparison',
+  },
+
   compare: {
     removeFromComparison: 'Remove {{name}} from comparison',
     addToComparison: 'Add {{name}} to comparison',
