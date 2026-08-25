@@ -1,6 +1,16 @@
 import axios from 'axios';
+import { DEFAULT_LANGUAGE, getStoredLanguage, translate } from '../i18n';
 
 const DEFAULT_BASE_URL = 'http://localhost:8080/api/v1';
+
+/**
+ * This module sits outside React, so it has no `useLanguage()` to call — it reads the
+ * persisted preference directly instead, which is the same source `LanguageProvider`
+ * seeds its own state from.
+ */
+function t(key, vars) {
+  return translate(getStoredLanguage() ?? DEFAULT_LANGUAGE, key, vars);
+}
 
 /** Where the bearer token lives between reloads. Writes are admin-only, reads never need it. */
 export const AUTH_TOKEN_KEY = 'motorcycle-comparator.token';
@@ -104,8 +114,8 @@ api.interceptors.response.use(
         new ApiRequestError({
           message:
             error.code === 'ECONNABORTED'
-              ? 'The API took too long to respond. Please try again.'
-              : 'Unable to reach the API. Check that it is running on ' + api.defaults.baseURL + '.',
+              ? t('errors.apiTimeout')
+              : t('errors.apiUnreachable', { baseUrl: api.defaults.baseURL }),
           path: config?.url,
         }),
       );
@@ -120,7 +130,7 @@ api.interceptors.response.use(
 
     return Promise.reject(
       new ApiRequestError({
-        message: payload.message || response.statusText || 'The request failed.',
+        message: payload.message || response.statusText || t('errors.requestFailed'),
         status: response.status,
         violations: payload.violations ?? [],
         path: payload.path ?? config?.url,

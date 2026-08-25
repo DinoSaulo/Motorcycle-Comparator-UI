@@ -8,60 +8,213 @@ import { CATEGORIES } from '../services/motorcycleService';
  * validates everything, and its `violations` are what the user is ultimately shown.
  */
 
+/**
+ * `label` carries the English fallback used wherever no `t()` is in scope (e.g. the
+ * validation summary below runs outside React); `labelKey` is what `FormField` renders
+ * through `t()` so the field name follows the active language.
+ */
 export const IDENTITY_FIELDS = [
-  { name: 'brand', label: 'Brand', type: 'text', required: true, maxLength: 60 },
-  { name: 'model', label: 'Model', type: 'text', required: true, maxLength: 120 },
-  { name: 'modelYear', label: 'Model year', type: 'integer', required: true, min: 1885, max: 2100 },
-  { name: 'category', label: 'Category', type: 'select', required: true, options: CATEGORIES },
-  { name: 'priceEur', label: 'Price', type: 'decimal', unit: 'EUR', min: 0 },
-  { name: 'description', label: 'Description', type: 'textarea', maxLength: 2000, full: true },
+  { name: 'brand', label: 'Brand', labelKey: 'fields.brand', type: 'text', required: true, maxLength: 60 },
+  { name: 'model', label: 'Model', labelKey: 'fields.model', type: 'text', required: true, maxLength: 120 },
+  {
+    name: 'modelYear',
+    label: 'Model year',
+    labelKey: 'fields.modelYear',
+    type: 'integer',
+    required: true,
+    min: 1885,
+    max: 2100,
+  },
+  {
+    name: 'category',
+    label: 'Category',
+    labelKey: 'fields.category',
+    type: 'select',
+    required: true,
+    options: CATEGORIES,
+  },
+  { name: 'priceEur', label: 'Price', labelKey: 'fields.priceEur', type: 'decimal', unit: 'EUR', min: 0 },
+  {
+    name: 'description',
+    label: 'Description',
+    labelKey: 'fields.description',
+    type: 'textarea',
+    maxLength: 2000,
+    full: true,
+  },
 ];
 
 export const CHASSIS_FIELDS = [
-  { name: 'frameType', label: 'Frame type', type: 'text', maxLength: 120 },
-  { name: 'frontSuspension', label: 'Front suspension', type: 'text', maxLength: 160 },
-  { name: 'rearSuspension', label: 'Rear suspension', type: 'text', maxLength: 160 },
-  { name: 'frontBrake', label: 'Front brake', type: 'text', maxLength: 160 },
-  { name: 'rearBrake', label: 'Rear brake', type: 'text', maxLength: 160 },
-  { name: 'absType', label: 'ABS type', type: 'text', maxLength: 80 },
-  { name: 'frontTyre', label: 'Front tyre', type: 'text', maxLength: 60 },
-  { name: 'rearTyre', label: 'Rear tyre', type: 'text', maxLength: 60 },
+  { name: 'frameType', label: 'Frame type', labelKey: 'fields.frameType', type: 'text', maxLength: 120 },
+  {
+    name: 'frontSuspension',
+    label: 'Front suspension',
+    labelKey: 'fields.frontSuspension',
+    type: 'text',
+    maxLength: 160,
+  },
+  {
+    name: 'rearSuspension',
+    label: 'Rear suspension',
+    labelKey: 'fields.rearSuspension',
+    type: 'text',
+    maxLength: 160,
+  },
+  { name: 'frontBrake', label: 'Front brake', labelKey: 'fields.frontBrake', type: 'text', maxLength: 160 },
+  { name: 'rearBrake', label: 'Rear brake', labelKey: 'fields.rearBrake', type: 'text', maxLength: 160 },
+  { name: 'absType', label: 'ABS type', labelKey: 'fields.absType', type: 'text', maxLength: 80 },
+  { name: 'frontTyre', label: 'Front tyre', labelKey: 'fields.frontTyre', type: 'text', maxLength: 60 },
+  { name: 'rearTyre', label: 'Rear tyre', labelKey: 'fields.rearTyre', type: 'text', maxLength: 60 },
 ];
 
 export const ENGINE_FIELDS = [
-  { name: 'engineType', label: 'Engine type', type: 'text', maxLength: 80 },
+  { name: 'engineType', label: 'Engine type', labelKey: 'fields.engineType', type: 'text', maxLength: 80 },
   // Nullable on purpose upstream: an electric motor has no displacement.
-  { name: 'displacementCc', label: 'Displacement', type: 'integer', unit: 'cc', min: 1 },
-  { name: 'cylinders', label: 'Cylinders', type: 'integer', min: 1 },
-  { name: 'valvesPerCylinder', label: 'Valves per cylinder', type: 'integer', min: 1 },
-  { name: 'maxPowerHp', label: 'Max power', type: 'decimal', unit: 'hp', min: 0 },
-  { name: 'maxPowerRpm', label: 'Power peak', type: 'integer', unit: 'rpm', min: 1 },
-  { name: 'maxTorqueNm', label: 'Max torque', type: 'decimal', unit: 'Nm', min: 0 },
-  { name: 'maxTorqueRpm', label: 'Torque peak', type: 'integer', unit: 'rpm', min: 1 },
-  { name: 'compressionRatio', label: 'Compression ratio', type: 'text', maxLength: 20 },
-  { name: 'boreMm', label: 'Bore', type: 'decimal', unit: 'mm', min: 0 },
-  { name: 'strokeMm', label: 'Stroke', type: 'decimal', unit: 'mm', min: 0 },
-  { name: 'coolingSystem', label: 'Cooling system', type: 'text', maxLength: 40 },
-  { name: 'fuelSystem', label: 'Fuel system', type: 'text', maxLength: 120 },
-  { name: 'transmissionType', label: 'Transmission', type: 'text', maxLength: 60 },
-  { name: 'gears', label: 'Gears', type: 'integer', min: 1 },
-  { name: 'finalDrive', label: 'Final drive', type: 'text', maxLength: 40 },
-  { name: 'topSpeedKph', label: 'Top speed', type: 'integer', unit: 'km/h', min: 1 },
-  { name: 'fuelConsumptionL100km', label: 'Fuel consumption', type: 'decimal', unit: 'l/100km', min: 0 },
-  { name: 'emissionStandard', label: 'Emission standard', type: 'text', maxLength: 30 },
+  {
+    name: 'displacementCc',
+    label: 'Displacement',
+    labelKey: 'fields.displacementCc',
+    type: 'integer',
+    unit: 'cc',
+    min: 1,
+  },
+  { name: 'cylinders', label: 'Cylinders', labelKey: 'fields.cylinders', type: 'integer', min: 1 },
+  {
+    name: 'valvesPerCylinder',
+    label: 'Valves per cylinder',
+    labelKey: 'fields.valvesPerCylinder',
+    type: 'integer',
+    min: 1,
+  },
+  { name: 'maxPowerHp', label: 'Max power', labelKey: 'fields.maxPowerHp', type: 'decimal', unit: 'hp', min: 0 },
+  {
+    name: 'maxPowerRpm',
+    label: 'Power peak',
+    labelKey: 'fields.maxPowerRpm',
+    type: 'integer',
+    unit: 'rpm',
+    min: 1,
+  },
+  {
+    name: 'maxTorqueNm',
+    label: 'Max torque',
+    labelKey: 'fields.maxTorqueNm',
+    type: 'decimal',
+    unit: 'Nm',
+    min: 0,
+  },
+  {
+    name: 'maxTorqueRpm',
+    label: 'Torque peak',
+    labelKey: 'fields.maxTorqueRpm',
+    type: 'integer',
+    unit: 'rpm',
+    min: 1,
+  },
+  {
+    name: 'compressionRatio',
+    label: 'Compression ratio',
+    labelKey: 'fields.compressionRatio',
+    type: 'text',
+    maxLength: 20,
+  },
+  { name: 'boreMm', label: 'Bore', labelKey: 'fields.boreMm', type: 'decimal', unit: 'mm', min: 0 },
+  { name: 'strokeMm', label: 'Stroke', labelKey: 'fields.strokeMm', type: 'decimal', unit: 'mm', min: 0 },
+  {
+    name: 'coolingSystem',
+    label: 'Cooling system',
+    labelKey: 'fields.coolingSystem',
+    type: 'text',
+    maxLength: 40,
+  },
+  { name: 'fuelSystem', label: 'Fuel system', labelKey: 'fields.fuelSystem', type: 'text', maxLength: 120 },
+  {
+    name: 'transmissionType',
+    label: 'Transmission',
+    labelKey: 'fields.transmissionType',
+    type: 'text',
+    maxLength: 60,
+  },
+  { name: 'gears', label: 'Gears', labelKey: 'fields.gears', type: 'integer', min: 1 },
+  { name: 'finalDrive', label: 'Final drive', labelKey: 'fields.finalDrive', type: 'text', maxLength: 40 },
+  {
+    name: 'topSpeedKph',
+    label: 'Top speed',
+    labelKey: 'fields.topSpeedKph',
+    type: 'integer',
+    unit: 'km/h',
+    min: 1,
+  },
+  {
+    name: 'fuelConsumptionL100km',
+    label: 'Fuel consumption',
+    labelKey: 'fields.fuelConsumptionL100km',
+    type: 'decimal',
+    unit: 'l/100km',
+    min: 0,
+  },
+  {
+    name: 'emissionStandard',
+    label: 'Emission standard',
+    labelKey: 'fields.emissionStandard',
+    type: 'text',
+    maxLength: 30,
+  },
 ];
 
 export const DIMENSION_FIELDS = [
-  { name: 'lengthMm', label: 'Length', type: 'integer', unit: 'mm', min: 1 },
-  { name: 'widthMm', label: 'Width', type: 'integer', unit: 'mm', min: 1 },
-  { name: 'heightMm', label: 'Height', type: 'integer', unit: 'mm', min: 1 },
-  { name: 'wheelbaseMm', label: 'Wheelbase', type: 'integer', unit: 'mm', min: 1 },
-  { name: 'seatHeightMm', label: 'Seat height', type: 'integer', unit: 'mm', min: 1 },
-  { name: 'groundClearanceMm', label: 'Ground clearance', type: 'integer', unit: 'mm', min: 1 },
-  { name: 'kerbWeightKg', label: 'Kerb weight', type: 'decimal', unit: 'kg', min: 0 },
-  { name: 'dryWeightKg', label: 'Dry weight', type: 'decimal', unit: 'kg', min: 0 },
-  { name: 'fuelCapacityL', label: 'Fuel capacity', type: 'decimal', unit: 'l', min: 0 },
-  { name: 'payloadKg', label: 'Payload', type: 'decimal', unit: 'kg', min: 0 },
+  { name: 'lengthMm', label: 'Length', labelKey: 'fields.lengthMm', type: 'integer', unit: 'mm', min: 1 },
+  { name: 'widthMm', label: 'Width', labelKey: 'fields.widthMm', type: 'integer', unit: 'mm', min: 1 },
+  { name: 'heightMm', label: 'Height', labelKey: 'fields.heightMm', type: 'integer', unit: 'mm', min: 1 },
+  {
+    name: 'wheelbaseMm',
+    label: 'Wheelbase',
+    labelKey: 'fields.wheelbaseMm',
+    type: 'integer',
+    unit: 'mm',
+    min: 1,
+  },
+  {
+    name: 'seatHeightMm',
+    label: 'Seat height',
+    labelKey: 'fields.seatHeightMm',
+    type: 'integer',
+    unit: 'mm',
+    min: 1,
+  },
+  {
+    name: 'groundClearanceMm',
+    label: 'Ground clearance',
+    labelKey: 'fields.groundClearanceMm',
+    type: 'integer',
+    unit: 'mm',
+    min: 1,
+  },
+  {
+    name: 'kerbWeightKg',
+    label: 'Kerb weight',
+    labelKey: 'fields.kerbWeightKg',
+    type: 'decimal',
+    unit: 'kg',
+    min: 0,
+  },
+  {
+    name: 'dryWeightKg',
+    label: 'Dry weight',
+    labelKey: 'fields.dryWeightKg',
+    type: 'decimal',
+    unit: 'kg',
+    min: 0,
+  },
+  {
+    name: 'fuelCapacityL',
+    label: 'Fuel capacity',
+    labelKey: 'fields.fuelCapacityL',
+    type: 'decimal',
+    unit: 'l',
+    min: 0,
+  },
+  { name: 'payloadKg', label: 'Payload', labelKey: 'fields.payloadKg', type: 'decimal', unit: 'kg', min: 0 },
 ];
 
 /** Mirrors the bounds on `motorcycle_additional_specs`. */
@@ -178,30 +331,46 @@ export function toPayload(state) {
   return payload;
 }
 
-/** Client-side gate for the few rules worth catching before a round trip. */
-export function validate(state) {
+/**
+ * Client-side gate for the few rules worth catching before a round trip.
+ *
+ * `t` is optional so this stays callable without a `LanguageProvider` in scope (tests,
+ * scripts); it falls back to the English copy baked in below.
+ */
+export function validate(state, t = (key, vars) => FALLBACK_VALIDATION_MESSAGES[key](vars)) {
   const errors = {};
-  if (!state.brand.trim()) errors.brand = 'Brand is required';
-  if (!state.model.trim()) errors.model = 'Model is required';
-  if (!state.category) errors.category = 'Category is required';
+  if (!state.brand.trim()) errors.brand = t('validation.brandRequired');
+  if (!state.model.trim()) errors.model = t('validation.modelRequired');
+  if (!state.category) errors.category = t('validation.categoryRequired');
 
   const year = Number(state.modelYear);
   if (!state.modelYear) {
-    errors.modelYear = 'Model year is required';
+    errors.modelYear = t('validation.modelYearRequired');
   } else if (Number.isNaN(year) || year < 1885 || year > 2100) {
-    errors.modelYear = 'Model year must be between 1885 and 2100';
+    errors.modelYear = t('validation.modelYearRange');
   }
 
   if (state.priceEur !== '' && Number(state.priceEur) <= 0) {
-    errors.priceEur = 'Price must be greater than zero';
+    errors.priceEur = t('validation.priceMustBePositive');
   }
 
   if (state.additionalSpecs.length > ADDITIONAL_SPECS_MAX) {
-    errors.additionalSpecs = `At most ${ADDITIONAL_SPECS_MAX} additional specifications`;
+    errors.additionalSpecs = t('validation.tooManyAdditionalSpecs', { max: ADDITIONAL_SPECS_MAX });
   }
   if (state.additionalSpecs.some((entry) => entry.value.trim() !== '' && entry.key.trim() === '')) {
-    errors.additionalSpecs = 'Every additional specification needs a name';
+    errors.additionalSpecs = t('validation.additionalSpecNeedsName');
   }
 
   return errors;
 }
+
+const FALLBACK_VALIDATION_MESSAGES = {
+  'validation.brandRequired': () => 'Brand is required',
+  'validation.modelRequired': () => 'Model is required',
+  'validation.categoryRequired': () => 'Category is required',
+  'validation.modelYearRequired': () => 'Model year is required',
+  'validation.modelYearRange': () => 'Model year must be between 1885 and 2100',
+  'validation.priceMustBePositive': () => 'Price must be greater than zero',
+  'validation.tooManyAdditionalSpecs': ({ max }) => `At most ${max} additional specifications`,
+  'validation.additionalSpecNeedsName': () => 'Every additional specification needs a name',
+};

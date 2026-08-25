@@ -54,9 +54,21 @@ export function formatMeasurement(value, unit) {
   return unit ? `${value} ${unit}` : String(value);
 }
 
-/** `OFF_ROAD` → `Off Road` */
-export function formatCategory(category) {
+/**
+ * `OFF_ROAD` → `Off Road`, or the localised label from `categories.*` when a
+ * translator (`t`, from `useLanguage()`) is passed. Falls back to the naive
+ * capitalisation below when no translation is available, so this stays usable
+ * without a `LanguageProvider` in scope.
+ */
+export function formatCategory(category, t) {
   if (isBlank(category)) return EMPTY_VALUE;
+
+  if (t) {
+    const key = `categories.${category}`;
+    const translated = t(key);
+    if (translated && translated !== key) return translated;
+  }
+
   return category
     .toLowerCase()
     .split('_')
