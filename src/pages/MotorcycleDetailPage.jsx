@@ -173,7 +173,7 @@ export default function MotorcycleDetailPage() {
       </div>
 
       <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
-        <SpecSection title={t('specLabels.Engine')} rows={engineRows} />
+        <SpecSection title={translateSpecLabel('Engine', t)} rows={engineRows} />
         <SpecSection title={translateSpecLabel('Chassis & brakes', t)} rows={chassisRows} />
         <SpecSection title={translateSpecLabel('Dimensions & weight', t)} rows={dimensionRows} />
 
