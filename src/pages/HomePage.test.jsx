@@ -409,3 +409,109 @@ describe('HomePage selection tray', () => {
     expect(screen.getByRole('button', { name: 'Select 1 more' })).toBeInTheDocument();
   });
 });
+
+describe('HomePage filter persistence', () => {
+  it('restores filters from URL query parameters when the page loads', () => {
+    stubBrands();
+    mockApi.onGet('/motorcycles').reply((config) => {
+      // Verify that the API request includes the filters from the URL
+      expect(config.params).toMatchObject({ brand: 'Honda', category: 'SPORT', sort: 'priceEur,asc' });
+      return [200, buildPage([cb650r()])];
+    });
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+      </Routes>,
+      { route: '/?brand=Honda&category=SPORT&sort=priceEur,asc' },
+    );
+
+    expect(screen.getByLabelText('Filter by brand')).toHaveValue('Honda');
+    expect(screen.getByLabelText('Filter by category')).toHaveValue('SPORT');
+    expect(screen.getByLabelText('Sort results')).toHaveValue('priceEur,asc');
+  });
+
+  it('preserves filters in the URL when changing filters', async () => {
+    const user = userEvent.setup({ delay: null });
+    stubBrands();
+    mockApi.onGet('/motorcycles').reply(200, buildPage([mt07()]));
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+      </Routes>,
+      { route: '/?brand=Honda' },
+    );
+
+    await screen.findByRole('heading', { name: 'Yamaha MT-07' });
+
+    // Change the category while brand is already in the URL
+    await user.selectOptions(screen.getByLabelText('Filter by category'), 'NAKED');
+
+    // Both filters should now be in the URL
+    await waitFor(() => {
+      const last = mockApi.history.get.filter((entry) => entry.url === '/motorcycles').at(-1);
+      expect(last.params).toMatchObject({ brand: 'Honda', category: 'NAKED' });
+    });
+  });
+
+  it('clears only the cleared filters from the URL when clearing filters', async () => {
+    const user = userEvent.setup({ delay: null });
+    stubBrands();
+    mockApi.onGet('/motorcycles').reply(200, buildPage([mt07()]));
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+      </Routes>,
+      { route: '/?brand=Honda&category=SPORT&sort=priceEur,desc&page=2' },
+    );
+
+    await screen.findByRole('heading', { name: 'Yamaha MT-07' });
+    expect(screen.getByRole('button', { name: 'Clear filters' })).toBeInTheDocument();
+
+    // Clear filters (brand and category)
+    await user.click(screen.getByRole('button', { name: 'Clear filters' }));
+
+    // Sort and page should remain in the URL, brand and category should be removed
+    await waitFor(() => {
+      const last = mockApi.history.get.filter((entry) => entry.url === '/motorcycles').at(-1);
+      expect(last.params).toMatchObject({ sort: 'priceEur,desc' });
+      expect(last.params.brand).toBeUndefined();
+      expect(last.params.category).toBeUndefined();
+    });
+  });
+
+  it('resets to page 0 when changing filters while on a later page', async () => {
+    const user = userEvent.setup({ delay: null });
+    stubBrands();
+    mockApi.onGet('/motorcycles').reply((config) => [
+      200,
+      buildPage([mt07()], {
+        totalPages: 3,
+        number: config.params.page,
+        first: config.params.page === 0,
+        last: false,
+      }),
+    ]);
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+      </Routes>,
+      { route: '/?page=2' },
+    );
+
+    await screen.findByText('Page 3 of 3');
+
+    // Change a filter
+    await user.selectOptions(screen.getByLabelText('Filter by brand'), 'Honda');
+
+    // Should reset to page 0
+    await waitFor(() => {
+      const last = mockApi.history.get.filter((entry) => entry.url === '/motorcycles').at(-1);
+      expect(last.params.page).toBe(0);
+      expect(last.params.brand).toBe('Honda');
+    });
+  });
+});

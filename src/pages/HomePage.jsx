@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { GitCompareArrows, SlidersHorizontal, X } from 'lucide-react';
 import SearchBar from '../components/search/SearchBar';
 import MotorcycleCard from '../components/common/MotorcycleCard';
@@ -23,6 +23,7 @@ export default function HomePage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { brands } = useBrands();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const SORT_OPTIONS = [
     { value: 'brand,asc', label: t('home.sortBrandAsc') },
@@ -31,11 +32,26 @@ export default function HomePage() {
     { value: 'modelYear,desc', label: t('home.sortNewest') },
   ];
 
-  const [query, setQuery] = useState('');
-  const [brand, setBrand] = useState('');
-  const [category, setCategory] = useState('');
-  const [sort, setSort] = useState('brand,asc');
-  const [page, setPage] = useState(0);
+  // Read filters from URL query parameters, with sensible defaults
+  const query = searchParams.get('q') ?? '';
+  const brand = searchParams.get('brand') ?? '';
+  const category = searchParams.get('category') ?? '';
+  const sort = searchParams.get('sort') ?? 'brand,asc';
+  const page = parseInt(searchParams.get('page') ?? '0', 10);
+
+  // Helper to update URL with new filter values
+  const updateSearchParams = useCallback((newParams) => {
+    const params = new URLSearchParams(searchParams);
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value === '' || value === undefined || value === null) {
+        params.delete(key);
+      } else {
+        params.set(key, String(value));
+      }
+    });
+    setSearchParams(params, { replace: false });
+  }, [searchParams, setSearchParams]);
+
   const [selected, setSelected] = useState([]);
 
   const filter = useMemo(() => ({ q: query, brand, category }), [query, brand, category]);
@@ -49,9 +65,8 @@ export default function HomePage() {
   // Any change to what is being searched invalidates the current page number —
   // page 3 of the old result set is meaningless against the new one.
   const handleQueryChange = useCallback((next) => {
-    setQuery(next);
-    setPage(0);
-  }, []);
+    updateSearchParams({ q: next, page: 0 });
+  }, [updateSearchParams]);
 
   const selectedIds = useMemo(() => new Set(selected.map((m) => m.id)), [selected]);
   const isFull = selected.length >= COMPARISON_MAX;
@@ -97,8 +112,7 @@ export default function HomePage() {
         <select
           value={brand}
           onChange={(event) => {
-            setBrand(event.target.value);
-            setPage(0);
+            updateSearchParams({ brand: event.target.value, page: 0 });
           }}
           aria-label={t('home.filterByBrand')}
           className={selectClass}
@@ -114,8 +128,7 @@ export default function HomePage() {
         <select
           value={category}
           onChange={(event) => {
-            setCategory(event.target.value);
-            setPage(0);
+            updateSearchParams({ category: event.target.value, page: 0 });
           }}
           aria-label={t('home.filterByCategory')}
           className={selectClass}
@@ -131,8 +144,7 @@ export default function HomePage() {
         <select
           value={sort}
           onChange={(event) => {
-            setSort(event.target.value);
-            setPage(0);
+            updateSearchParams({ sort: event.target.value, page: 0 });
           }}
           aria-label={t('home.sortResults')}
           className={`${selectClass} ml-auto`}
@@ -148,9 +160,7 @@ export default function HomePage() {
           <button
             type="button"
             onClick={() => {
-              setBrand('');
-              setCategory('');
-              setPage(0);
+              updateSearchParams({ brand: '', category: '', page: 0 });
             }}
             className="text-sm font-medium text-accent-700 hover:underline dark:text-accent-400"
           >
@@ -197,7 +207,7 @@ export default function HomePage() {
             >
               <button
                 type="button"
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                onClick={() => updateSearchParams({ page: Math.max(0, page - 1) })}
                 disabled={pageInfo.first}
                 className="rounded-lg border border-zinc-300 px-4 py-2 font-medium transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
               >
@@ -208,7 +218,7 @@ export default function HomePage() {
               </span>
               <button
                 type="button"
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => updateSearchParams({ page: page + 1 })}
                 disabled={pageInfo.last}
                 className="rounded-lg border border-zinc-300 px-4 py-2 font-medium transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
               >

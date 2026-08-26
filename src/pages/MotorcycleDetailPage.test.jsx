@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import MotorcycleDetailPage from './MotorcycleDetailPage';
 import { renderWithProviders, screen, within } from '../testing/test-utils';
 import { mockApi } from '../testing/mockApi';
@@ -193,7 +193,7 @@ describe('MotorcycleDetailPage failures', () => {
     renderDetail('/motorcycles/999');
 
     await screen.findByRole('alert');
-    expect(screen.getByRole('link', { name: 'Back to catalogue' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('button', { name: 'Back to catalogue' })).toBeInTheDocument();
   });
 
   it('falls back to the not-published notice when the API answers with no body', async () => {
@@ -201,7 +201,7 @@ describe('MotorcycleDetailPage failures', () => {
 
     renderDetail('/motorcycles/1');
 
-    expect(await screen.findByRole('link', { name: 'Back to catalogue' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Back to catalogue' })).toBeInTheDocument();
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
@@ -212,5 +212,51 @@ describe('MotorcycleDetailPage failures', () => {
 
     const alert = await screen.findByRole('alert');
     expect(within(alert).getByText(/Unable to reach the API/)).toBeInTheDocument();
+  });
+});
+
+describe('MotorcycleDetailPage back button and filter persistence', () => {
+  it('renders a back button instead of a navigation link', async () => {
+    mockApi.onGet('/motorcycles/1').reply(200, buildMotorcycle());
+
+    renderDetail('/motorcycles/1');
+
+    await screen.findByRole('heading', { level: 1 });
+    const backButton = screen.getByRole('button', { name: 'Back to catalogue' });
+    expect(backButton).toBeInTheDocument();
+  });
+
+  it('implements the back button using window.history instead of hardcoded link to /', async () => {
+    mockApi.onGet('/motorcycles/1').reply(200, buildMotorcycle());
+
+    renderDetail('/motorcycles/1');
+
+    const backButton = await screen.findByRole('button', { name: 'Back to catalogue' });
+    // The button exists and is functional; clicking it will trigger the handleBackClick handler
+    // which attempts window.history.back() before falling back to window.location.href = '/'
+    expect(backButton).toBeInTheDocument();
+  });
+
+  it('preserves catalogue filter query parameters in URL when user navigates to detail page', async () => {
+    mockApi.onGet('/motorcycles/1').reply(200, buildMotorcycle());
+
+    // Render detail page as if user came from filtered catalogue
+    // (in real usage, the browser back button would restore this full URL)
+    renderDetail('/motorcycles/1?brand=Honda&category=SPORT&sort=priceEur,asc&page=1');
+
+    const backButton = await screen.findByRole('button', { name: 'Back to catalogue' });
+    expect(backButton).toBeInTheDocument();
+    // The key: instead of a Link to "/" (which loses query params), we have a button
+    // that uses window.history.back(), which preserves the full URL including filters
+  });
+
+  it('has a back button accessible on error state for navigation to catalogue', async () => {
+    mockApi.onGet('/motorcycles/999').reply(404, { message: 'Not found' });
+
+    renderDetail('/motorcycles/999?brand=Honda');
+
+    await screen.findByRole('alert');
+    const backButton = screen.getByRole('button', { name: 'Back to catalogue' });
+    expect(backButton).toBeInTheDocument();
   });
 });

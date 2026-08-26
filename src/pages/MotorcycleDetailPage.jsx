@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, Gauge, GitCompareArrows } from 'lucide-react';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -60,9 +60,36 @@ function SpecSection({ title, rows }) {
   );
 }
 
+/**
+ * Renders a back button that either goes back in history (if coming from the catalogue with filters)
+ * or navigates to home (fallback).
+ */
+function BackButton({ t }) {
+  const handleBackClick = () => {
+    // Try to go back in history; if there's no history, fall back to home
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = '/';
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleBackClick}
+      className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 transition-colors hover:text-accent-700 dark:text-zinc-400"
+    >
+      <ArrowLeft className="size-4" aria-hidden="true" />
+      {t('nav.backToCatalogue')}
+    </button>
+  );
+}
+
 export default function MotorcycleDetailPage() {
   const { id } = useParams();
   const { t } = useLanguage();
+  const location = useLocation();
   const [motorcycle, setMotorcycle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -98,13 +125,7 @@ export default function MotorcycleDetailPage() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16">
         {error && <ErrorMessage error={error} />}
-        <Link
-          to="/"
-          className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-700 hover:underline dark:text-accent-400"
-        >
-          <ArrowLeft className="size-4" aria-hidden="true" />
-          {t('nav.backToCatalogue')}
-        </Link>
+        <BackButton t={t} />
       </div>
     );
   }
@@ -121,13 +142,7 @@ export default function MotorcycleDetailPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <Link
-        to="/"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 transition-colors hover:text-accent-700 dark:text-zinc-400"
-      >
-        <ArrowLeft className="size-4" aria-hidden="true" />
-        {t('nav.backToCatalogue')}
-      </Link>
+      <BackButton t={t} />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
         <div className="lg:col-span-2">
