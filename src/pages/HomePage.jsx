@@ -41,16 +41,23 @@ export default function HomePage() {
 
   // Helper to update URL with new filter values
   const updateSearchParams = useCallback((newParams) => {
-    const params = new URLSearchParams(searchParams);
-    Object.entries(newParams).forEach(([key, value]) => {
-      if (value === '' || value === undefined || value === null) {
-        params.delete(key);
-      } else {
-        params.set(key, String(value));
+    setSearchParams((prev) => {
+      const params = {};
+      for (const [key, value] of prev.entries()) {
+        params[key] = value;
       }
+
+      Object.entries(newParams).forEach(([key, value]) => {
+        if (value === '' || value === undefined || value === null) {
+          delete params[key];
+        } else {
+          params[key] = String(value);
+        }
+      });
+
+      return params;
     });
-    setSearchParams(params, { replace: false });
-  }, [searchParams, setSearchParams]);
+  }, [setSearchParams]);
 
   const [selected, setSelected] = useState([]);
 
@@ -65,8 +72,27 @@ export default function HomePage() {
   // Any change to what is being searched invalidates the current page number —
   // page 3 of the old result set is meaningless against the new one.
   const handleQueryChange = useCallback((next) => {
-    updateSearchParams({ q: next, page: 0 });
-  }, [updateSearchParams]);
+    // Only reset page if the query actually changed from its current value
+    setSearchParams((prev) => {
+      const currentQuery = prev.get('q') ?? '';
+      // Only update if the query has actually changed
+      if (currentQuery === next) {
+        return prev;
+      }
+
+      const params = {};
+      for (const [key, value] of prev.entries()) {
+        params[key] = value;
+      }
+      if (next) {
+        params.q = next;
+      } else {
+        delete params.q;
+      }
+      params.page = '0';
+      return params;
+    });
+  }, [setSearchParams]);
 
   const selectedIds = useMemo(() => new Set(selected.map((m) => m.id)), [selected]);
   const isFull = selected.length >= COMPARISON_MAX;

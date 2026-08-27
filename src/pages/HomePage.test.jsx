@@ -411,7 +411,7 @@ describe('HomePage selection tray', () => {
 });
 
 describe('HomePage filter persistence', () => {
-  it('restores filters from URL query parameters when the page loads', () => {
+  it('restores filters from URL query parameters when the page loads', async () => {
     stubBrands();
     mockApi.onGet('/motorcycles').reply((config) => {
       // Verify that the API request includes the filters from the URL
@@ -425,6 +425,9 @@ describe('HomePage filter persistence', () => {
       </Routes>,
       { route: '/?brand=Honda&category=SPORT&sort=priceEur,asc' },
     );
+
+    // Wait for the page to load before checking filter values
+    await screen.findByRole('heading', { name: 'Honda CB650R' });
 
     expect(screen.getByLabelText('Filter by brand')).toHaveValue('Honda');
     expect(screen.getByLabelText('Filter by category')).toHaveValue('SPORT');
