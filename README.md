@@ -52,6 +52,7 @@ Welcome to **Motorcycle Comparator UI**! This is the high-octane React front-end
 | **Icons** | [Lucide React](https://lucide.react.dev/) | Sleek, customizable iconography |
 | **Routing** | [React Router DOM v7](https://reactrouter.com/) | Client-side page navigation & URL parameters |
 | **HTTP Client** | [Axios](https://axios-http.com/) | API requests, error normalisation, and abort signals |
+| **Linting** | [ESLint 9](https://eslint.org/) | Code quality, React hooks linting & style enforcement |
 | **Testing** | [Vitest](https://vitest.dev/) + React Testing Library | Unit, integration, and security testing |
 | **Localization** | Custom i18n Engine | Seamless multi-language UI translation |
 
@@ -100,6 +101,8 @@ Run these scripts in your terminal:
 | `npm run dev` | 🚀 Dev Server | Starts Vite dev server with Hot Module Replacement (HMR) |
 | `npm run build` | 📦 Production Build | Compiles production assets into `dist/` |
 | `npm run preview` | 👁️ Preview | Serves the production build locally for verification |
+| `npm run lint` | 🧹 Lint Check | Runs ESLint to inspect JavaScript & JSX code |
+| `npm run lint:fix` | 🛠️ Auto-Fix Lint | Automatically fixes auto-fixable ESLint issues |
 | `npm test` | 🧪 Run Tests | Executes all Vitest unit, integration, and security tests |
 | `npm run test:unit` | 🔬 Unit Tests | Runs unit tests (excluding `*.integration.test.*`) |
 | `npm run test:integration` | 🔗 Integration Tests | Runs integration tests |

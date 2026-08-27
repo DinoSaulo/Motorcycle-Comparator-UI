@@ -86,7 +86,8 @@ describe('Modal', () => {
     const onClose = vi.fn();
     open({ onClose });
 
-    // The backdrop is the dialog's parent element; it carries no role of its own.
+    // The backdrop is the dialog's parent element. It is `role="presentation"`, so it is
+    // deliberately unreachable through any `getByRole` query -- reach it through the panel.
     fireEvent.mouseDown(screen.getByRole('dialog').parentElement);
 
     expect(onClose).toHaveBeenCalledTimes(1);

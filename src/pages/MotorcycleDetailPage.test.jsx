@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import MotorcycleDetailPage from './MotorcycleDetailPage';
 import { renderWithProviders, screen, within } from '../testing/test-utils';
 import { mockApi } from '../testing/mockApi';

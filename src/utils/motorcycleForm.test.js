@@ -65,7 +65,7 @@ describe('toFormState', () => {
   });
 
   it('defaults a missing imageUrl to null', () => {
-    const { imageUrl, ...rest } = buildMotorcycle();
+    const { imageUrl: _imageUrl, ...rest } = buildMotorcycle();
     const state = toFormState(rest);
     expect(state.imageUrl).toBeNull();
   });

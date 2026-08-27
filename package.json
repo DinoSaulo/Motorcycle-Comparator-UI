@@ -9,6 +9,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "vitest run",
     "test:unit": "vitest run --exclude \"src/**/*.integration.test.{js,jsx}\"",
     "test:integration": "vitest run --passWithNoTests integration.test",
@@ -24,6 +26,7 @@
     "twemoji": "^14.0.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@tailwindcss/vite": "^4.3.3",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^7.0.1",
@@ -32,6 +35,10 @@
     "@vitejs/plugin-react": "^6.1.0",
     "@vitest/coverage-v8": "^4.1.11",
     "axios-mock-adapter": "^2.1.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.11.0",
     "jsdom": "^30.0.1",
     "tailwindcss": "^4.3.3",
     "vite": "^8.2.2",

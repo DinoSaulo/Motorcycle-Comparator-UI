@@ -9,6 +9,7 @@ frontend. Any AI agent or developer contributing to this repository must follow 
 - **Routing:** `react-router-dom` v7
 - **HTTP client:** `axios`
 - **Styling:** Tailwind CSS v4 + `lucide-react` for icons
+- **Linting:** ESLint 9 (Flat Config in `eslint.config.js` — run `npm run lint`)
 - **Backend API URL:** `http://localhost:8080/api/v1`
 - **Language rule:** all code, file names, variables, functions, comments, commits and
   documentation **MUST BE IN ENGLISH**.

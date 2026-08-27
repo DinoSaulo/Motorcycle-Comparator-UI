@@ -383,7 +383,6 @@ describe('HomePage selection tray', () => {
 
     for (const id of [1, 2, 3, 4]) {
       // Sequential on purpose: each click changes what the next one is allowed to do.
-      // eslint-disable-next-line no-await-in-loop
       await user.click(screen.getByRole('button', { name: `Add Brand M${id} to comparison` }));
     }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams, useLocation } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, Gauge, GitCompareArrows } from 'lucide-react';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -89,7 +89,6 @@ function BackButton({ t }) {
 export default function MotorcycleDetailPage() {
   const { id } = useParams();
   const { t } = useLanguage();
-  const location = useLocation();
   const [motorcycle, setMotorcycle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

@@ -70,6 +70,11 @@ export default function Modal({ isOpen, onClose, title, description, children })
 
   return createPortal(
     <div
+      // Decorative: it dims the page and gives a pointer a large dismiss target. Marking
+      // that explicitly is what keeps click-to-dismiss from becoming a fake button --
+      // `role="button"` would announce the page-covering dimmer as a control and add a
+      // tab stop ahead of the dialog. The keyboard route out is Escape, handled below.
+      role="presentation"
       className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-zinc-950/60 p-4 pt-16 backdrop-blur-sm"
       onMouseDown={(event) => {
         // mousedown, not click: a drag that starts inside the panel and ends on
