@@ -10,8 +10,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:unit": "vitest run --include 'src/**/*.test.{js,jsx}'",
-    "test:integration": "vitest run --include 'src/**/*.integration.test.{js,jsx}'",
+    "test:unit": "vitest run --exclude 'src/**/*.integration.test.{js,jsx}'",
+    "test:integration": "vitest run --grep 'integration'",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },
