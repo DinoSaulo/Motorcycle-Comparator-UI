@@ -44,11 +44,18 @@ describe('searchMotorcycles', () => {
   });
 
   it('forwards an abort signal', async () => {
-    mockApi.onGet('/motorcycles').reply(200, buildPage());
+    let requestConfig;
+    mockApi.onGet('/motorcycles').reply((config) => {
+      requestConfig = config;
+      return [200, buildPage()];
+    });
     const controller = new AbortController();
+
     await searchMotorcycles({ signal: controller.signal });
-    // No assertion needed beyond "did not throw" — axios wiring is covered by api.test.js;
-    // this just confirms the param is passed through.
+
+    // Asserted on the captured config rather than inside the handler, so a handler that
+    // never runs fails the test instead of silently passing with nothing checked.
+    expect(requestConfig?.signal).toBe(controller.signal);
   });
 });
 
