@@ -3,6 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      Shipped with the document so it holds wherever `dist/` lands, including a static host
+      nobody configured headers on. Three limits are inherent to a <meta> policy, not choices:
+
+      * `frame-ancestors`/`X-Frame-Options` are ignored here and only work as real response
+        headers, so clickjacking must be refused at the edge that serves this file. The
+        directive is left out rather than declared to look like protection it cannot give.
+      * One document serves `vite dev` and the production bundle alike, so the policy has to
+        satisfy the looser of the two: dev injects the Fast Refresh preamble as an inline
+        script and Tailwind's stylesheets from JavaScript, hence `'unsafe-inline'`. The built
+        output needs neither — tighten both to `'self'` in the deployment's header, which can
+        differ per environment. What holds either way is still worth having: no third-party
+        script origins, no `eval`, no plugins, no `<base>` hijack, no cross-origin form posts.
+      * `connect-src` names the API origin literally because a meta tag cannot read
+        `VITE_API_BASE_URL`; it tracks the documented default plus the Vite HMR socket.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: http://localhost:8080; font-src 'self' data:; connect-src 'self' http://localhost:8080 ws://localhost:5173"
+    />
+    <!-- Keeps the full URL (which carries filter and comparison ids) off cross-origin requests. -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta
       name="description"
       content="Browse motorcycles and compare their engine, chassis and dimension specifications side by side."
