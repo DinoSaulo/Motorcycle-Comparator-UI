@@ -9,18 +9,8 @@ function describeSize(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-/**
- * Picks an image and previews it.
- *
- * Two modes, because the API needs an id before it can accept a file:
- *  - **deferred** (`onFileSelected`): the file is held locally and previewed from an object
- *    URL; the create page uploads it right after the motorcycle exists.
- *  - **immediate** (`onUpload`): the file is sent straight away, used when editing.
- *
- * Type and size are checked here so the obvious mistakes never cost a round trip. The API
- * re-checks both, and additionally verifies the bytes match the declared type — which this
- * cannot do, so a renamed file still fails server-side with a clear message.
- */
+// Picks and previews images using deferred (create) or immediate (edit) mode.
+// Pre-validates file type and size to prevent unnecessary round trips.
 export default function ImageUploader({
   imageUrl,
   onUpload,

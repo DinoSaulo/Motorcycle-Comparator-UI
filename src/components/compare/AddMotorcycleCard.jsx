@@ -1,10 +1,7 @@
 import { Plus } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 
-/**
- * Empty column slot in the comparison header. Renders as a button so it is
- * reachable by keyboard and announced as an action, not decoration.
- */
+// Accessible button for empty column slots in the comparison header.
 export default function AddMotorcycleCard({ onClick, disabled, remaining }) {
   const { t } = useLanguage();
 

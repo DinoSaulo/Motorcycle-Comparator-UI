@@ -2,10 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { api, resolveImageUrl } from './api';
 import { mockApi } from '../testing/mockApi';
 
-/**
- * Regression tests locking in behaviour that this audit verified is already safe.
- * See docs/security-audit.md for the full write-up of each category.
- */
+// Regression tests locking in security behaviors verified during audit.
 
 afterEach(() => {
   mockApi.reset();

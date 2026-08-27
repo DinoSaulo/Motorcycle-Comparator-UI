@@ -26,11 +26,7 @@ function isBlank(value) {
   return value === null || value === undefined || value === '';
 }
 
-/**
- * Builds the rows for one field group, dropping anything that was never published.
- * A group with nothing left to show is omitted entirely rather than rendered as a
- * wall of em dashes.
- */
+// Builds rows for one field group, omitting unpublished fields and empty groups.
 function buildRows(fields, source) {
   return fields
     .map((field) => ({ field, value: source?.[field.name] }))
@@ -60,10 +56,7 @@ function SpecSection({ title, rows }) {
   );
 }
 
-/**
- * Renders a back button that either goes back in history (if coming from the catalogue with filters)
- * or navigates to home (fallback).
- */
+// Renders a back button that uses window.history back or falls back to root page.
 function BackButton({ t }) {
   const handleBackClick = () => {
     // Try to go back in history; if there's no history, fall back to home

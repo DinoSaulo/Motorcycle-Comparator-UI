@@ -3,11 +3,7 @@ import { DEFAULT_LANGUAGE, getStoredLanguage, translate } from '../i18n';
 
 const DEFAULT_BASE_URL = 'http://localhost:8080/api/v1';
 
-/**
- * This module sits outside React, so it has no `useLanguage()` to call — it reads the
- * persisted preference directly instead, which is the same source `LanguageProvider`
- * seeds its own state from.
- */
+// Helper function for i18n translations outside React component contexts.
 function t(key, vars) {
   return translate(getStoredLanguage() ?? DEFAULT_LANGUAGE, key, vars);
 }
@@ -15,9 +11,7 @@ function t(key, vars) {
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || DEFAULT_BASE_URL,
   timeout: 15_000,
-  // No default Content-Type on purpose: axios derives `application/json` for a plain
-  // object and `multipart/form-data` — with the boundary — for FormData. Pinning it
-  // here would produce a boundary-less multipart header that Spring cannot parse.
+  // Content-Type is omitted so Axios can calculate JSON or FormData boundaries dynamically.
 });
 
 /** Absolute origin of the API, used to resolve the host-relative image URLs it returns. */
@@ -30,14 +24,7 @@ export function getApiOrigin() {
   }
 }
 
-/**
- * Turns a motorcycle's `imageUrl` into something an `<img src>` can load.
- *
- * Uploaded images come back host-relative (`/api/v1/images/motorcycles/…`) because the API
- * cannot know the origin it is reached on. Resolving them against the *API* origin — not the
- * page's — is what makes them load while the app is served from Vite on a different port.
- * Absolute URLs are curated external links and pass through untouched.
- */
+// Converts host-relative API image URLs to fully qualified absolute image src URLs.
 export function resolveImageUrl(imageUrl) {
   if (!imageUrl) return null;
   if (/^(https?:)?\/\//i.test(imageUrl) || imageUrl.startsWith('data:')) {
@@ -46,10 +33,7 @@ export function resolveImageUrl(imageUrl) {
   return getApiOrigin() + (imageUrl.startsWith('/') ? '' : '/') + imageUrl;
 }
 
-/**
- * The API answers every failure with the same `ApiError` body, so the whole client
- * only ever handles one error shape. `violations` is populated on 400s from bean validation.
- */
+// Standardized error wrapper class for all network, HTTP, and validation failures.
 export class ApiRequestError extends Error {
   constructor({ message, status, violations = [], path }) {
     super(message);
@@ -65,18 +49,7 @@ export class ApiRequestError extends Error {
   }
 }
 
-/**
- * The bearer token lives here and nowhere else.
- *
- * A module-level variable is reachable only through this module's closure, whereas
- * anything in `localStorage`/`sessionStorage` is readable by *any* script that ever runs
- * on this origin — a future XSS bug, a compromised dependency, a malicious extension —
- * and can be exfiltrated wholesale in one line. Keeping the token out of Web Storage is
- * the point of this design, not an implementation detail (SEC-001).
- *
- * The price is that the token dies with the page: see `restoreSession` in
- * `authService.js` for the reload behaviour that follows from it.
- */
+// SEC-001: Memory-only bearer token storage keeping tokens out of Web Storage to prevent XSS.
 let bearerToken = null;
 
 export function getStoredToken() {
@@ -136,10 +109,7 @@ api.interceptors.response.use(
   },
 );
 
-/**
- * Drops keys the user has not constrained. An empty string reaching the API would be
- * matched literally against `brand`, quietly returning nothing.
- */
+// Drops empty query parameters to prevent matching literal empty strings against API.
 export function pruneParams(params) {
   return Object.fromEntries(
     Object.entries(params).filter(

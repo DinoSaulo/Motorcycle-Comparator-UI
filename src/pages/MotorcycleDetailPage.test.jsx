@@ -83,9 +83,7 @@ describe('MotorcycleDetailPage content', () => {
   });
 
   it('titles the engine section with its translated label, not the raw i18n key', async () => {
-    // Regression: this heading used to call t('specLabels.Engine') directly instead of
-    // translateSpecLabel('Engine', t) like its siblings — since only pt.js carries a
-    // specLabels.Engine entry, English fell through to the literal key.
+    // Verifies translateSpecLabel engine heading translation in both locales.
     mockApi.onGet('/motorcycles/1').reply(200, buildMotorcycle());
 
     renderDetail('/motorcycles/1');

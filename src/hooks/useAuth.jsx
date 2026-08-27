@@ -3,14 +3,7 @@ import { hasExpired, isAdmin, login as requestLogin, logout, restoreSession } fr
 
 const AuthContext = createContext(null);
 
-/**
- * Holds the administrator session for the app.
- *
- * `restoreSession()` runs on mount, but since the token is memory-only it can only ever
- * return a session inside the same page load — a reload signs the admin out by design
- * (see `authService.restoreSession`). A timer signs them out the moment the token lapses
- * rather than letting them fill in a long form that the API would reject on submit.
- */
+// Holds administrator session state and automatically handles token expiration timers.
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(restoreSession);
 
@@ -28,9 +21,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (!session) return undefined;
 
-    // `hasExpired` also covers a missing or unparsable `expiresAt`, so a session the UI
-    // would never treat as authenticated is actively signed out instead of lingering in
-    // state as neither signed in nor signed out.
+    // Immediately signs out if token expiration check fails or has elapsed.
     if (hasExpired(session.expiresAt)) {
       signOut();
       return undefined;

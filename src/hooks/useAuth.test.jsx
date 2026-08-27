@@ -39,9 +39,7 @@ describe('useAuth', () => {
   });
 
   it('starts unauthenticated after a reload, since the token does not survive one', () => {
-    // Stored metadata outlives the page, the in-memory token does not — the deliberate
-    // SEC-001 trade-off, asserted here so nobody "fixes" the reload behaviour by putting
-    // the token back into storage.
+    // Asserts SEC-001 trade-off: stored metadata without in-memory token starts unauthenticated.
     seedStoredSession();
     setStoredToken(null);
 

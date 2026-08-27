@@ -3,11 +3,7 @@ import { cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, vi } from 'vitest';
 import { setStoredToken } from '../services/api';
 
-// jsdom has no real storage persistence guarantees across tests; start every test from a
-// clean slate so language/session state never leaks between specs. The bearer token is no
-// longer in Web Storage at all (SEC-001) — it is a module-level variable, and a module
-// registry is shared by every spec in a file, so it has to be cleared explicitly or the
-// first test to sign in leaves every later one authenticated.
+// Clears local/session storage and reset memory bearer tokens before each test run.
 beforeEach(() => {
   window.localStorage.clear();
   window.sessionStorage.clear();

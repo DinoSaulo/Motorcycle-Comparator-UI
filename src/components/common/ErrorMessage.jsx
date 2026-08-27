@@ -1,10 +1,8 @@
 import { RotateCcw, TriangleAlert } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 
-/**
- * Renders an `ApiRequestError`. Field violations from a 400 are listed individually
- * so the user learns which input the API rejected, not just that something failed.
- */
+// Renders ApiRequestError failures.
+// Individual field violations from 400 responses are listed clearly.
 export default function ErrorMessage({ error, onRetry }) {
   const { t } = useLanguage();
   if (!error) return null;

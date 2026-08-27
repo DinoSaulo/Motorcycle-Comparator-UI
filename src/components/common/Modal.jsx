@@ -6,11 +6,7 @@ import { useLanguage } from '../../hooks/useLanguage';
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
-/**
- * Accessible dialog: labelled, Escape-dismissable, focus-trapped, and restoring
- * focus to whatever opened it. Rendered through a portal so the surrounding
- * layout's stacking and overflow contexts cannot clip it.
- */
+// Accessible portal dialog: focus-trapped, labelled, and Escape-dismissable.
 export default function Modal({ isOpen, onClose, title, description, children }) {
   const { t } = useLanguage();
   const panelRef = useRef(null);
@@ -34,8 +30,7 @@ export default function Modal({ isOpen, onClose, title, description, children })
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
 
-      // Wrap the tab cycle at both ends so focus can never escape into the
-      // inert page behind the dialog.
+      // Wraps tab cycle at both ends so focus stays inside the modal.
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last.focus();
@@ -52,8 +47,7 @@ export default function Modal({ isOpen, onClose, title, description, children })
 
     previouslyFocused.current = document.activeElement;
 
-    // Scrolling the page under an open dialog is disorienting, especially with
-    // the sticky navbar still reachable by pointer.
+    // Locks body scrolling while modal is open.
     const { overflow } = document.body.style;
     document.body.style.overflow = 'hidden';
 
@@ -70,10 +64,7 @@ export default function Modal({ isOpen, onClose, title, description, children })
 
   return createPortal(
     <div
-      // Decorative: it dims the page and gives a pointer a large dismiss target. Marking
-      // that explicitly is what keeps click-to-dismiss from becoming a fake button --
-      // `role="button"` would announce the page-covering dimmer as a control and add a
-      // tab stop ahead of the dialog. The keyboard route out is Escape, handled below.
+      // Decorative backdrop for click-to-dismiss without adding a fake tab stop.
       role="presentation"
       className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-zinc-950/60 p-4 pt-16 backdrop-blur-sm"
       onMouseDown={(event) => {

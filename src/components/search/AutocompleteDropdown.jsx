@@ -2,10 +2,8 @@ import { formatCategory, formatDisplayName, formatEngineSize } from '../../utils
 import { useLanguage } from '../../hooks/useLanguage';
 import LoadingSpinner from '../common/LoadingSpinner';
 
-/**
- * Listbox half of the combobox. Purely presentational: `SearchBar` owns the
- * active index and all key handling, this only renders and reports clicks.
- */
+// Presentational listbox component for search suggestions.
+// Active index and keyboard navigation are managed by SearchBar.
 export default function AutocompleteDropdown({
   id,
   options,

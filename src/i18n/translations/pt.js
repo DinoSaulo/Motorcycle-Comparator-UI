@@ -251,12 +251,8 @@ export default {
     additionalSpecNeedsName: 'Toda especificação adicional precisa de um nome',
   },
 
-  /**
-   * Exact-match translations for the fixed English strings the comparison endpoint's
-   * `ComparisonService.GROUPS` registry hardcodes as group names and spec labels —
-   * see `utils/formatters.js`'s `translateSpecLabel`. Keys are the literal backend
-   * text, not identifiers, so they must stay byte-for-byte in sync with that registry.
-   */
+  // Translations for backend spec labels and group names.
+  // Keys must stay byte-for-byte in sync with utils/formatters.js.
   specLabels: {
     // Group names
     Overview: 'Visão geral',

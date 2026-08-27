@@ -13,14 +13,7 @@ afterEach(() => {
   mockApi.reset();
 });
 
-/**
- * SEC-004 (see docs/security-audit.md) — remediated; this file is the regression guard.
- *
- * The 2-4 id bound used to live only in the `useComparison` hook, so any future caller
- * reaching `compareMotorcycles` directly lost the fast-fail and paid for a round trip the
- * API was always going to refuse with a 400. The guard now sits in the service itself,
- * where the contract it enforces actually belongs.
- */
+// SEC-004: Regression tests verifying compareMotorcycles 2-4 ID bound enforcement.
 describe('SEC-004: compareMotorcycles enforces the 2-4 id bound itself', () => {
   it.each([
     ['none', []],
@@ -53,13 +46,7 @@ describe('SEC-004: compareMotorcycles enforces the 2-4 id bound itself', () => {
   });
 });
 
-/**
- * SEC-005 (see docs/security-audit.md) — remediated; regression guard.
- *
- * Ids and slugs come from route params, i.e. straight from the address bar. Interpolated
- * raw, a `/`, `?` or `#` would re-point the request at a different endpoint (or truncate it)
- * instead of producing an honest 404.
- */
+// SEC-005: Regression tests ensuring URL path parameters are safely URI-encoded.
 describe('SEC-005: path segments are URI-encoded before interpolation', () => {
   it('encodes a slug that tries to traverse to another endpoint', async () => {
     const motorcycle = buildMotorcycle();

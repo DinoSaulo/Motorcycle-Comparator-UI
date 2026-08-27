@@ -1,8 +1,4 @@
-/**
- * Shared sample data mirroring the API contract described in CLAUDE.md and the
- * backend DTOs. Kept in one place so every test file compares against the same
- * shapes instead of hand-rolling slightly different ones.
- */
+// Shared sample data mirroring the API contract for test suites.
 import { setStoredToken } from '../services/api';
 
 /** Where `authService` keeps the non-sensitive half of a session. */
@@ -19,49 +15,38 @@ export function buildMotorcycle(overrides = {}) {
     category: 'NAKED',
     priceEur: 8299,
     description: 'A punchy middleweight naked bike.',
-    imageUrl: null,
-    frameType: 'Steel diamond',
-    frontSuspension: '41mm telescopic fork',
-    rearSuspension: 'Single shock',
-    frontBrake: 'Dual 298mm discs',
-    rearBrake: '245mm disc',
-    absType: 'Dual-channel',
-    frontTyre: '120/70ZR17',
-    rearTyre: '180/55ZR17',
     engine: {
-      engineType: 'Parallel-twin',
       displacementCc: 689,
+      powerHp: 73.4,
+      powerKw: 54,
+      powerRpm: 8750,
+      torqueNm: 67,
+      torqueRpm: 6500,
+      strokeType: 'Four-stroke',
       cylinders: 2,
       valvesPerCylinder: 4,
-      maxPowerHp: 73.4,
-      maxPowerRpm: 8750,
-      maxTorqueNm: 68.6,
-      maxTorqueRpm: 6500,
-      compressionRatio: '11.5:1',
-      boreMm: 80,
-      strokeMm: 68.6,
-      coolingSystem: 'Liquid',
-      fuelSystem: 'Fuel injection',
-      transmissionType: 'Manual',
+      cooling: 'Liquid',
+      transmission: 'Chain',
       gears: 6,
-      finalDrive: 'Chain',
-      topSpeedKph: 210,
-      fuelConsumptionL100km: 4.6,
-      emissionStandard: 'Euro 5',
     },
-    dimension: {
-      lengthMm: 2110,
-      widthMm: 745,
-      heightMm: 1090,
-      wheelbaseMm: 1400,
-      seatHeightMm: 805,
-      groundClearanceMm: 140,
-      kerbWeightKg: 184,
-      dryWeightKg: null,
+    chassis: {
+      frontBrake: 'Double disc, 298 mm',
+      rearBrake: 'Single disc, 245 mm',
+      frontSuspension: 'Telescopic fork',
+      rearSuspension: 'Swingarm',
+    },
+    dimensions: {
+      dryWeightKg: 184,
       fuelCapacityL: 14,
-      payloadKg: 190,
+      seatHeightMm: 805,
+      wheelbaseMm: 1400,
     },
-    additionalSpecs: { 'Warranty': '2 years' },
+    additionalSpecs: {
+      Warranty: '2 years',
+    },
+    imageUrl: null,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
     ...overrides,
   };
 }
@@ -79,27 +64,22 @@ export function buildPage(content = [buildMotorcycle()], overrides = {}) {
   };
 }
 
-export function buildComparison(motorcycles = [buildMotorcycle(), buildMotorcycle({ id: 2, brand: 'Honda', model: 'CB650R' })]) {
+export function buildComparison(motorcycles = [buildMotorcycle({ id: 1 }), buildMotorcycle({ id: 2, model: 'MT-09' })]) {
   return {
     motorcycles,
     groups: [
       {
-        name: '',
+        name: 'Overview',
         rows: [
-          { label: 'Category', unit: null, values: motorcycles.map((m) => m.category), winnerIndexes: [], differing: motorcycles.some((m) => m.category !== motorcycles[0].category) },
-          { label: 'Model year', unit: null, values: motorcycles.map((m) => m.modelYear), winnerIndexes: [], differing: false },
+          { label: 'Category', unit: null, winnerIndexes: [], values: ['NAKED', 'NAKED'], differing: false },
+          { label: 'Model year', unit: null, winnerIndexes: [], values: ['2024', '2024'], differing: false },
         ],
       },
       {
         name: 'Engine',
         rows: [
-          {
-            label: 'Max power',
-            unit: 'hp',
-            values: motorcycles.map((m) => m.engine.maxPowerHp),
-            winnerIndexes: [0],
-            differing: true,
-          },
+          { label: 'Displacement', unit: 'cc', winnerIndexes: [1], values: ['689', '890'], differing: true },
+          { label: 'Power', unit: 'hp', winnerIndexes: [1], values: ['73.4', '119'], differing: true },
         ],
       },
     ],
@@ -108,23 +88,16 @@ export function buildComparison(motorcycles = [buildMotorcycle(), buildMotorcycl
 
 export function buildSession(overrides = {}) {
   return {
-    accessToken: 'jwt.token.value',
+    accessToken: 'mock-jwt-token',
     tokenType: 'Bearer',
-    expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+    expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
     username: 'admin',
     roles: ['ROLE_ADMIN'],
     ...overrides,
   };
 }
 
-/**
- * Leaves the app in the state a real `login()` does: display metadata in `sessionStorage`,
- * bearer token in memory.
- *
- * Both halves are required. Since the token stopped being persisted (SEC-001) storage alone
- * restores nothing — which is precisely the reload behaviour `restoreSession` now enforces —
- * so any test that wants an authenticated render has to seed the token too.
- */
+// Seeds authenticated session state (sessionStorage metadata and in-memory bearer token).
 export function seedStoredSession(session = buildSession()) {
   const { username, roles, expiresAt, accessToken } = session;
   try {

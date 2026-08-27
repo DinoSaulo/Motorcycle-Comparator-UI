@@ -1,8 +1,4 @@
-/**
- * Display helpers. Every one of them treats `null`/`undefined` as "not published"
- * and renders an em dash — never a zero, which would read as a real measurement.
- */
-
+// Display helpers treating null/undefined as "not published" em dashes.
 export const EMPTY_VALUE = '—';
 
 const currency = new Intl.NumberFormat('en-IE', {
@@ -54,12 +50,7 @@ export function formatMeasurement(value, unit) {
   return unit ? `${value} ${unit}` : String(value);
 }
 
-/**
- * `OFF_ROAD` → `Off Road`, or the localised label from `categories.*` when a
- * translator (`t`, from `useLanguage()`) is passed. Falls back to the naive
- * capitalisation below when no translation is available, so this stays usable
- * without a `LanguageProvider` in scope.
- */
+// Formats Category enums (e.g. OFF_ROAD -> Off Road) with optional i18n translation.
 export function formatCategory(category, t) {
   if (isBlank(category)) return EMPTY_VALUE;
 
@@ -76,18 +67,7 @@ export function formatCategory(category, t) {
     .join(' ');
 }
 
-/**
- * Translates a spec label or group name from the comparison endpoint — e.g. `"Model
- * year"`, `"Chassis & brakes"` — against `specLabels.*`. These are fixed English
- * strings hardcoded in the backend's `ComparisonService` (not a field name or an
- * enum, just display text it decided on), so the lookup is keyed by the exact string
- * rather than a camelCase key like `fields.*` uses for the admin form's own labels.
- *
- * Falls back to the original text when there is no matching entry — which is also
- * the correct behaviour for English (no `specLabels.*` needed there, the backend
- * string already *is* the English label) and for admin-authored "Other
- * specifications" keys, which must never be mistaken for one of these fixed labels.
- */
+// Translates comparison spec labels and group names with fallback to original string.
 export function translateSpecLabel(text, t) {
   if (isBlank(text) || !t) return text;
   const key = `specLabels.${text}`;

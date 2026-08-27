@@ -31,13 +31,8 @@ function Section({ title, description, children }) {
 
 const grid = 'grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3';
 
-/**
- * Create/edit form for a motorcycle.
- *
- * The parent owns `state` so it can also drive the image endpoints, which live outside the
- * JSON payload. Server-side field violations are merged into the same error map as the local
- * checks, so both render against their own input.
- */
+// Create/edit form for a motorcycle.
+// Server-side field violations are merged into local input errors.
 export default function MotorcycleForm({
   state,
   onChange,

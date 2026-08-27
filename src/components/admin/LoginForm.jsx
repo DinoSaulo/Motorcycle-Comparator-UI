@@ -6,13 +6,8 @@ import { ADMIN_ROLE } from '../../services/authService';
 import ErrorMessage from '../common/ErrorMessage';
 import LoadingSpinner from '../common/LoadingSpinner';
 
-/**
- * Credential form for the administration area.
- *
- * A successful login with a non-admin account is treated as a failure here: the API would
- * accept those credentials and then reject every write with a 403, which reads as a broken
- * screen rather than a permissions problem.
- */
+// Credential form for the administration area.
+// Validates admin permissions immediately to avoid 403 authorization failures later.
 export default function LoginForm() {
   const { signIn, signOut } = useAuth();
   const { t } = useLanguage();

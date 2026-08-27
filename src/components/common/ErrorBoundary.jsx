@@ -2,10 +2,7 @@ import { Component } from 'react';
 import { TriangleAlert } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 
-/**
- * Fallback UI, split out as a function component so it can call `useLanguage()` —
- * the boundary itself has to stay a class, React exposes no hook equivalent for it.
- */
+// Fallback UI component that consumes useLanguage hook.
 function ErrorFallback({ message, onReset }) {
   const { t } = useLanguage();
 
@@ -29,10 +26,7 @@ function ErrorFallback({ message, onReset }) {
   );
 }
 
-/**
- * Stops a render-time crash in one page from blanking the whole application.
- * Must stay a class component — React exposes no hook equivalent.
- */
+// Catches render-time crashes in components to prevent app-wide blank screens.
 export default class ErrorBoundary extends Component {
   state = { error: null };
 

@@ -5,16 +5,8 @@ import { resolveImageUrl } from '../../services/api';
 import { useLanguage } from '../../hooks/useLanguage';
 import { formatCategory, formatCurrency, formatDisplayName, translateSpecLabel } from '../../utils/formatters';
 
-/**
- * Renders the comparison exactly as the API shaped it: groups in order, rows in order.
- * `group.name` and `row.label` come straight from the backend, which decides content,
- * order and grouping — this only decides how those fixed English strings are *displayed*,
- * translating them client-side via `translateSpecLabel` (falls through untouched for any
- * label it doesn't recognise, e.g. an admin's free-form "Other specifications" key).
- *
- * The only other client-side transformation is the "differences only" filter, which
- * leans on the `differing` flag the backend already computes per row.
- */
+// Renders server-calculated comparison matrix and translates spec labels.
+// Supports client-side filtering via server-provided `differing` flags.
 export default function ComparisonTable({ comparison, onRemove }) {
   const { t } = useLanguage();
   const [differencesOnly, setDifferencesOnly] = useState(false);
@@ -56,9 +48,7 @@ export default function ComparisonTable({ comparison, onRemove }) {
 
       {/* Horizontal scrolling is contained here so the page body never scrolls sideways. */}
       <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-        {/* table-fixed pins every column to the width declared on its <th> here, so a
-            long value further down a row (or a short one) can never widen or narrow a
-            column — which is what let the two photos above render at different sizes. */}
+        {/* table-fixed pins every column to fixed widths declared on <th> elements. */}
         <table className="w-full min-w-3xl table-fixed border-collapse text-left">
           <caption className="sr-only">{t('compare.tableCaption', { count: columnCount })}</caption>
 

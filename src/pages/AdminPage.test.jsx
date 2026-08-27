@@ -12,12 +12,7 @@ import {
   SESSION_STORAGE_KEY as SESSION_KEY,
 } from '../testing/fixtures';
 
-/**
- * `/admin` gates itself on the session rather than on a route guard, so both branches
- * are reachable from the same render — signed out shows the login form, signed in the
- * dashboard. `seedStoredSession` puts the app in the state a real login leaves behind,
- * which is what `AuthProvider` restores from on mount.
- */
+// AdminPage test suite covering anonymous login form and authenticated dashboard.
 
 const LANGUAGE_KEY = 'motorcycle-comparator.language';
 

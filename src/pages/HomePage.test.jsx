@@ -6,10 +6,7 @@ import { renderWithProviders, screen, waitFor, within } from '../testing/test-ut
 import { mockApi } from '../testing/mockApi';
 import { buildMotorcycle, buildPage } from '../testing/fixtures';
 
-/**
- * Page-level integration: the real `SearchBar`, `MotorcycleCard`, `useMotorcycles`
- * and `useBrands` all run, with only the HTTP boundary faked through `mockApi`.
- */
+// Page-level integration tests for HomePage components and API hooks.
 
 const LANGUAGE_KEY = 'motorcycle-comparator.language';
 

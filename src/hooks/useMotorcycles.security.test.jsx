@@ -8,12 +8,7 @@ afterEach(() => {
   mockApi.reset();
 });
 
-/**
- * Locks in the 2-4 id contract of `GET /motorcycles/compare` (see CLAUDE.md §3 and
- * `COMPARISON_MIN`/`COMPARISON_MAX` in services/motorcycleService.js). A request
- * outside that range is a guaranteed 400 from the backend, so the hook must never
- * issue it.
- */
+// Security tests asserting useComparison enforcement of 2-4 ID bounds.
 describe('SEC: useComparison refuses to call the API outside the 2-4 id bound', () => {
   it('does not request the comparison for a single id', () => {
     renderHook(() => useComparison(['1']));
@@ -37,10 +32,7 @@ describe('SEC: useComparison refuses to call the API outside the 2-4 id bound', 
   });
 });
 
-/**
- * `?ids=` is hand-editable in the address bar. Anything that is not a bare integer
- * must be dropped before it ever reaches `compareMotorcycles`/the API.
- */
+// Security tests ensuring non-numeric URL parameters are sanitised before API request.
 describe('SEC: useComparisonSelection sanitises ids parsed from the URL', () => {
   it('drops non-numeric ids so a hand-edited URL cannot inject anything but integers', () => {
     const params = new URLSearchParams();

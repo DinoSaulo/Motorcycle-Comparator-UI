@@ -7,10 +7,8 @@ const SIZES = {
   lg: 'size-10',
 };
 
-/**
- * `label` is announced to screen readers; the icon itself is decorative.
- * Falls back to the translated generic "Loading" when the caller does not pass one.
- */
+// Accessible spinner component with screen reader label support.
+// Defaults to the translated generic "Loading" text.
 export default function LoadingSpinner({ size = 'md', label }) {
   const { t } = useLanguage();
   const resolvedLabel = label ?? t('common.loading');

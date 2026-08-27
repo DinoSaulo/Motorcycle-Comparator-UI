@@ -3,13 +3,7 @@ import { DEFAULT_LANGUAGE, getStoredLanguage, setStoredLanguage, translate } fro
 
 const LanguageContext = createContext(null);
 
-/**
- * Holds the site's active language and exposes `t()` to translate against it.
- *
- * The stored preference wins when present; otherwise the site defaults to Portuguese
- * rather than guessing from the browser locale. `document.documentElement.lang` is kept
- * in sync so assistive technology and the browser both see the right language.
- */
+// Manages active language state, updates html lang attributes, and exposes t().
 export function LanguageProvider({ children }) {
   const [language, setLanguageState] = useState(() => getStoredLanguage() ?? DEFAULT_LANGUAGE);
 

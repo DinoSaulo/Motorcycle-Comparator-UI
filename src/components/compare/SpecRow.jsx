@@ -3,20 +3,8 @@ import { Trophy } from 'lucide-react';
 import { EMPTY_VALUE, formatCategory, translateSpecLabel } from '../../utils/formatters';
 import { useLanguage } from '../../hooks/useLanguage';
 
-/**
- * One specification line across every compared motorcycle.
- *
- * The row arrives fully resolved from the API — label, unit, display order and
- * `winnerIndexes` are all decided server-side — so this stays a dumb renderer, aside
- * from two display-only translations: `row.label` through `translateSpecLabel`, and —
- * because the "Category" row is the one spec whose value is a raw enum code
- * (`SPORT`, `OFF_ROAD`, ...) rather than already-formatted text — its values through
- * the same `formatCategory` every other category display in the app uses.
- *
- * Two contract details matter here:
- *  - a `null` value means "not published" and must render as a dash, never as 0;
- *  - `winnerIndexes` is empty when the spec is not rankable or everything ties.
- */
+// Renders one spec row using server-provided labels, units, and winner indexes.
+// Renders null values as dashes and formats raw Category enum values.
 function SpecRow({ row, columnCount }) {
   const { t } = useLanguage();
   const winners = new Set(row.winnerIndexes ?? []);

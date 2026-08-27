@@ -6,11 +6,7 @@ import { renderWithProviders, screen, waitFor, within } from '../testing/test-ut
 import { mockApi } from '../testing/mockApi';
 import { buildMotorcycle, buildSession, seedStoredSession } from '../testing/fixtures';
 
-/**
- * Create and edit run through the same page, so both are driven here end to end:
- * real `MotorcycleForm`, real `ImageUploader`, real `toPayload`, faked HTTP only.
- */
-
+// Tests end-to-end create and edit flows through MotorcycleForm and ImageUploader.
 const LANGUAGE_KEY = 'motorcycle-comparator.language';
 
 beforeEach(() => {
@@ -259,10 +255,7 @@ describe('AdminMotorcycleFormPage create', () => {
     expect(await screen.findByRole('heading', { name: 'Edit motorcycle' })).toBeInTheDocument();
     await waitFor(() => expect(mockApi.history.get.at(-1).url).toBe('/motorcycles/9'));
 
-    // FormScreen is keyed by id specifically so this navigation remounts it and its
-    // lazy `useState` re-reads `location.state.imageError` — regression coverage for
-    // that: without the key, React reuses the create-form instance and this banner
-    // never appears.
+    // Verifies FormScreen remounts on ID change to re-read imageError state.
     expect(
       await screen.findByText('The motorcycle was created, but its image failed to upload: Image is too large'),
     ).toBeInTheDocument();

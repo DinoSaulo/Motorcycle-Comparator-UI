@@ -5,10 +5,7 @@ import { renderWithProviders, screen, waitFor, within } from '../testing/test-ut
 import { mockApi } from '../testing/mockApi';
 import { buildComparison, buildMotorcycle, buildPage } from '../testing/fixtures';
 
-/**
- * The comparison is driven entirely by `?ids=` — see CLAUDE.md's "prefer the URL over
- * local state" rule — so these tests seed the router history rather than a store.
- */
+// Tests ComparePage behavior driven by ?ids= query string URL state.
 
 const LANGUAGE_KEY = 'motorcycle-comparator.language';
 

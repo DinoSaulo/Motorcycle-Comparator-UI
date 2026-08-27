@@ -30,10 +30,8 @@ export default function AdminMotorcycleFormPage() {
     );
   }
 
-  // Keyed by id so navigating from the create form to the record it just made
-  // (e.g. after an image upload fails) remounts this instead of reusing it — the
-  // `error` state below is seeded once, from `location.state`, in a lazy `useState`
-  // initialiser, which only re-runs on a genuine mount.
+  // Keyed by id so navigating from create to edit forces a remount
+  // to re-trigger state initialization from location.state.
   return <FormScreen key={id ?? 'new'} id={id} isEditing={isEditing} />;
 }
 

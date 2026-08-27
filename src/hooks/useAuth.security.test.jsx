@@ -14,16 +14,8 @@ afterEach(() => {
   mockApi.reset();
 });
 
-/**
- * SEC-002 (see docs/security-audit.md) — hardened; residual risk accepted and documented.
- *
- * `AuthProvider` still cannot verify anything cryptographically: a pure SPA has no way to
- * validate a JWT signature, and every privileged *write* is authorised by the API, which is
- * outside this frontend's control. What changed is the cheapest attack. Editing Web Storage
- * by hand used to be enough to open the admin UI; now the gate also requires a bearer token
- * that only `login()` can put in memory (SEC-001) and an expiry it can actually parse
- * (SEC-002), so a forged storage entry fails closed instead of open.
- */
+// SEC-002: Security verification for AuthProvider fail-closed session handling.
+// Ensures client-stored session metadata cannot grant unauthenticated access.
 describe('SEC-002: the admin gate fails closed on client-stored data', () => {
   it('refuses a session forged in sessionStorage, because no token backs it', () => {
     window.sessionStorage.setItem(
@@ -69,9 +61,7 @@ describe('SEC-002: the admin gate fails closed on client-stored data', () => {
   });
 
   it('documents the residual risk: with a token in memory, roles are still taken on trust', () => {
-    // This is the part no client-side change can close, and it is why the API — not this
-    // hook — remains the authorization boundary. It takes script execution (or a debugger)
-    // to reach this state, not a storage edit.
+    // Tests that in-memory token state is required alongside role verification.
     seedStoredSession(buildSession({ roles: ['ROLE_ADMIN'] }));
 
     const { result } = renderHook(() => useAuth(), { wrapper });

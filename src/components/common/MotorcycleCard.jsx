@@ -11,10 +11,8 @@ import {
   formatPower,
 } from '../../utils/formatters';
 
-/**
- * Catalogue tile. Memoised because the grid re-renders on every selection change
- * while the motorcycles themselves stay identical.
- */
+// Catalogue tile component.
+// Memoised to optimize grid re-renders during selection changes.
 function MotorcycleCard({ motorcycle, selected, onToggle, disabled }) {
   const { t } = useLanguage();
   const name = formatDisplayName(motorcycle);

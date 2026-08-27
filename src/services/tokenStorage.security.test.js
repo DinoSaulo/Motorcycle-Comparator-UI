@@ -4,21 +4,7 @@ import { getStoredToken } from './api';
 import { mockApi } from '../testing/mockApi';
 import { buildSession, SESSION_STORAGE_KEY } from '../testing/fixtures';
 
-/**
- * SEC-001 (see docs/security-audit.md) — remediated; this file is the regression guard.
- *
- * The admin bearer token used to be written to `window.localStorage`. Anything readable
- * through Web Storage is readable by any script that ever runs on this origin — a future
- * XSS bug, a compromised third-party `<script>`, a malicious browser extension — because
- * it is plain JavaScript-accessible storage, unlike a token held in a module closure.
- *
- * It now lives in a module-level variable in `services/api.js` and is never persisted, and
- * `services/authService.js` stores only display metadata (`username`, `roles`, `expiresAt`)
- * in `sessionStorage`. These tests pin that down from the outside: they drive a real login
- * through the mocked API and then go looking for the token everywhere a script could reach
- * it. If a future change reintroduces persistence, they fail here rather than in an
- * incident report.
- */
+// SEC-001: Regression security tests ensuring bearer token is never persisted in Web Storage.
 const LEGACY_TOKEN_KEY = 'motorcycle-comparator.token';
 
 afterEach(() => {

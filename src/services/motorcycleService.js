@@ -17,11 +17,7 @@ export const CATEGORIES = [
   'ELECTRIC',
 ];
 
-/**
- * `GET /motorcycles` — every filter is optional and combinable.
- *
- * Returns Spring's `Page` envelope: `{ content, totalElements, totalPages, number, size, first, last }`.
- */
+// GET /motorcycles — searches motorcycles with paged filter envelope response.
 export async function searchMotorcycles({
   filter = {},
   page = 0,
@@ -37,18 +33,11 @@ export async function searchMotorcycles({
 }
 
 /** `GET /motorcycles/brands` — distinct brands, for the filter sidebar. */
-export async function listBrands({ signal } = {}) {
-  const { data } = await api.get('/motorcycles/brands', { signal });
-  return data;
+export function listBrands({ signal } = {}) {
+  return api.get('/motorcycles/brands', { signal }).then((res) => res.data);
 }
 
-/**
- * `GET /motorcycles/{id}`.
- *
- * Every path segment below goes through `encodeURIComponent`: ids and slugs arrive from
- * route params, which are whatever the user typed in the address bar. Unencoded, a `/`
- * or `#` would silently re-target the request at a different endpoint rather than 404.
- */
+// GET /motorcycles/{id} — fetches motorcycle by ID with URL encoding.
 export async function getMotorcycleById(id, { signal } = {}) {
   const { data } = await api.get(`/motorcycles/${encodeURIComponent(id)}`, { signal });
   return data;
@@ -60,19 +49,9 @@ export async function getMotorcycleBySlug(slug, { signal } = {}) {
   return data;
 }
 
-/**
- * `GET /motorcycles/compare?ids=1,2,3`
- *
- * The response arrives pre-shaped as table rows — the backend owns every spec label,
- * unit, display order and "which value wins", so the table component stays a dumb renderer.
- *
- * Ids are joined manually: Spring binds `List<Long>` from one comma-separated value,
- * whereas axios would otherwise serialise the array as `ids[]=1&ids[]=2`.
- */
+// GET /motorcycles/compare?ids=1,2,3 — requests comparison matrix for 2-4 motorcycles.
 export async function compareMotorcycles(ids, { signal } = {}) {
-  // The bound belongs to the endpoint's contract, not to the screen that happens to call
-  // it: enforcing it here means a caller reaching past `useComparison` cannot spend a round
-  // trip on a request the API is guaranteed to refuse.
+  // Enforces 2-4 ID limit contract to prevent unnecessary 400 API requests.
   if (!Array.isArray(ids) || ids.length < COMPARISON_MIN || ids.length > COMPARISON_MAX) {
     throw new Error(`compareMotorcycles requires ${COMPARISON_MIN}-${COMPARISON_MAX} ids`);
   }
@@ -92,10 +71,7 @@ export async function createMotorcycle(payload) {
   return data;
 }
 
-/**
- * `PUT /motorcycles/{id}` — a **full replacement**: any optional field left out of the
- * payload is cleared, so callers must send the complete record, not just what changed.
- */
+// PUT /motorcycles/{id} — full replacement: omitted optional fields are cleared.
 export async function updateMotorcycle(id, payload) {
   const { data } = await api.put(`/motorcycles/${encodeURIComponent(id)}`, payload);
   return data;
@@ -110,12 +86,8 @@ export async function deleteMotorcycle(id) {
 export const IMAGE_CONTENT_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 export const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 
-/**
- * `POST /motorcycles/{id}/image` — multipart upload, returns the updated motorcycle.
- *
- * The Content-Type header is deliberately not set: the browser has to add the multipart
- * boundary itself, and naming the type here would strip it.
- */
+// POST /motorcycles/{id}/image — multipart upload endpoint.
+export async function uploadMotorcycleImage(id, file, { onProgress } = {}) {
 export async function uploadMotorcycleImage(id, file, { onProgress } = {}) {
   const formData = new FormData();
   formData.append('file', file);

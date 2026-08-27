@@ -8,12 +8,7 @@ import ptFlag from '../../assets/flags/pt.svg';
 import usFlag from '../../assets/flags/us.svg';
 import gbFlag from '../../assets/flags/gb.svg';
 
-/**
- * Vendored from twemoji's own SVG set (github.com/jdecked/twemoji) — the npm package
- * ships the parser only, no bundled artwork. Keyed by `twemoji.convert.toCodePoint`,
- * the exact scheme twemoji names its own asset files by, so each entry stays
- * traceable back to the flag emoji it renders rather than a bare hex filename.
- */
+// SVG flags keyed by twemoji code point for regional language visualization.
 const FLAGS = {
   [twemoji.convert.toCodePoint('🇧🇷')]: { src: brFlag, name: 'Brazil' },
   [twemoji.convert.toCodePoint('🇵🇹')]: { src: ptFlag, name: 'Portugal' },
@@ -43,13 +38,7 @@ function FlagPair({ flags }) {
   );
 }
 
-/**
- * Replaces a native `<select>`: no browser renders an `<img>` inside an `<option>`,
- * so showing flags next to each language name needs a real listbox. Follows the same
- * ARIA listbox pattern as `AutocompleteDropdown` — the list itself holds DOM focus,
- * `aria-activedescendant` drives the highlighted row, and selection commits on
- * `mousedown` so a click never races the blur that would otherwise close it.
- */
+// Custom accessible ARIA listbox dropdown for switching languages with flag icons.
 export default function LanguageSwitcher() {
   const { language, setLanguage, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);

@@ -5,13 +5,8 @@ import { useLanguage } from '../../hooks/useLanguage';
 const inputClass =
   'w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white';
 
-/**
- * Renders one descriptor from `utils/motorcycleForm`.
- *
- * `value` is always a string — number inputs included — so every control stays
- * controlled and React never warns about an input flipping to uncontrolled.
- * Conversion to numbers or nulls happens once, in `toPayload`.
- */
+// Renders a form field descriptor with string-driven controlled inputs.
+// Conversion to numbers or nulls happens in toPayload.
 export default function FormField({ field, value, error, onChange, disabled }) {
   const { t } = useLanguage();
   const id = useId();

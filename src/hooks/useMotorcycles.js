@@ -10,12 +10,7 @@ import {
 
 const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 };
 
-/**
- * Paged catalogue search.
- *
- * Every run is tied to an `AbortController` so a superseded request can never
- * overwrite the results of a newer one — the classic autocomplete race.
- */
+// Paged catalogue search with AbortController to prevent race conditions.
 export function useMotorcycles({ filter, page = 0, size = 20, sort = 'brand,asc', enabled = true } = {}) {
   const [page_, setPage] = useState(EMPTY_PAGE);
   const [loading, setLoading] = useState(enabled);
@@ -88,12 +83,7 @@ export function useBrands() {
   return { brands, loading };
 }
 
-/**
- * The side-by-side comparison for `ids`.
- *
- * Skips the request entirely when the selection is outside the 2–4 the endpoint
- * accepts, so a half-built selection never triggers a guaranteed 400.
- */
+// Side-by-side comparison hook that validates 2-4 bike limits before fetching.
 export function useComparison(ids) {
   const [comparison, setComparison] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -132,13 +122,7 @@ export function useComparison(ids) {
   return { comparison, loading, error };
 }
 
-/**
- * Reads and writes the compared ids as a `?ids=1,2,3` query string.
- *
- * The URL *is* the state: the backend deliberately exposes comparison as a GET so the
- * page stays shareable and bookmarkable, and duplicating that into a store would only
- * create a second source of truth to keep in sync.
- */
+// Synchronizes motorcycle comparison selection with shareable ?ids=1,2,3 URL parameters.
 export function useComparisonSelection(searchParams, setSearchParams) {
   const ids = useMemo(() => {
     const raw = searchParams.get('ids');

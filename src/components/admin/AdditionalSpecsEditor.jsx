@@ -9,12 +9,8 @@ import {
 const inputClass =
   'w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white';
 
-/**
- * Key/value editor for the long-tail specs that have no dedicated column.
- *
- * Rows are kept as an ordered list rather than an object so two of them can briefly hold
- * the same key while being typed; `toPayload` collapses them into a map on submit.
- */
+// Key/value editor for long-tail specs without dedicated columns.
+// Kept as an ordered list so duplicate keys can briefly exist while typing.
 export default function AdditionalSpecsEditor({ entries, error, onChange, disabled }) {
   const { t } = useLanguage();
   const update = (index, patch) =>

@@ -7,12 +7,8 @@ import AutocompleteDropdown from './AutocompleteDropdown';
 
 const SUGGESTION_COUNT = 6;
 
-/**
- * Free-text catalogue search with an ARIA combobox autocomplete.
- *
- * `onSelect` receives a full motorcycle when a suggestion is chosen; `onQueryChange`
- * reports the debounced term so a parent can filter its own grid alongside.
- */
+// Free-text catalogue search with accessible ARIA combobox autocomplete.
+// Reports selected motorcycle objects and debounced search queries.
 export default function SearchBar({ onSelect, onQueryChange, placeholder, autoFocus = false }) {
   const { t } = useLanguage();
   const resolvedPlaceholder = placeholder ?? t('search.placeholder');

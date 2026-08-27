@@ -6,10 +6,8 @@ import App from './App';
 import { mockApi } from './testing/mockApi';
 import { buildMotorcycle, buildPage, seedStoredSession } from './testing/fixtures';
 
-/**
- * `App` supplies its own `LanguageProvider`/`AuthProvider`, so these tests wrap it in a
- * router only — using `renderWithProviders` here would nest a second copy of each.
- */
+// App supplies its own providers, so these tests wrap it in a router only
+// to avoid nesting duplicate provider instances.
 
 const LANGUAGE_KEY = 'motorcycle-comparator.language';
 

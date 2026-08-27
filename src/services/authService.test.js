@@ -124,9 +124,7 @@ describe('restoreSession', () => {
   });
 
   it('returns null after a reload, because the token cannot survive one', () => {
-    // Metadata outlives the page; the module-level token does not. Simulating that gap is
-    // the whole SEC-001 trade-off: reloading signs the admin out rather than rendering an
-    // authenticated shell with no token to back a single request.
+    // Asserts SEC-001 trade-off: reloading without in-memory token resets stored session.
     seedStoredSession();
     setStoredToken(null);
 

@@ -2,19 +2,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { extname, join, relative, sep } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-/**
- * Greps the whole `src/` tree for the dangerous patterns this audit checked for by
- * hand (see docs/security-audit.md). Runs once per `describe` block against the same
- * file list so a future regression — someone reaching for `dangerouslySetInnerHTML`
- * to fix a rendering quirk, or pasting a token while debugging — fails CI instead of
- * waiting for the next manual audit.
- *
- * `src/i18n/translations/**` is excluded: it is plain UI copy (e.g. the string
- * `password: 'Password'`), not executable code, and would false-positive the
- * hardcoded-credential heuristic below. Test files (`*.test.js(x)`) are excluded too
- * — this file and its siblings legitimately mention these tokens in comments and
- * mock credentials such as `'s3cret'`.
- */
+// Static security checks scanning src/ for dangerous patterns like dangerouslySetInnerHTML.
 
 const SRC_ROOT = join(__dirname, '..');
 const EXCLUDED_DIR_SEGMENT = `${sep}i18n${sep}translations${sep}`;

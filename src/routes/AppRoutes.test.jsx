@@ -4,10 +4,7 @@ import { renderWithProviders, screen, waitFor } from '../testing/test-utils';
 import { mockApi } from '../testing/mockApi';
 import { buildComparison, buildMotorcycle, buildPage, seedStoredSession } from '../testing/fixtures';
 
-/**
- * Route-level integration. Every page except the catalogue is behind `React.lazy`, so
- * these assertions have to await the `Suspense` boundary rather than query synchronously.
- */
+// Route-level integration tests covering lazy-loaded page route resolutions.
 
 const LANGUAGE_KEY = 'motorcycle-comparator.language';
 

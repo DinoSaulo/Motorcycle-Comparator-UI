@@ -15,11 +15,7 @@ afterEach(() => {
   mockApi.reset();
 });
 
-/**
- * Route-level companion to `src/hooks/useAuth.security.test.jsx` — see SEC-002 in
- * docs/security-audit.md. `AppRoutes.test.jsx` already covers the healthy paths; this file
- * pins the hostile ones: what a hand-edited storage entry reaches, and what it does not.
- */
+// SEC-002: Verifies forged session data cannot reach protected admin routes.
 describe('SEC-002: forged session data does not reach the admin route UI', () => {
   it('sends a session forged in storage to the login screen, not to the form', async () => {
     window.sessionStorage.setItem(

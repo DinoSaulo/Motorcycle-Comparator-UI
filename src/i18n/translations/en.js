@@ -1,8 +1,5 @@
-/**
- * English strings. Keys are grouped by the area of the UI that owns them, mirroring
- * `src/components` and `src/pages`. Values may contain `{{placeholder}}` tokens that
- * `translate()` interpolates — see `src/i18n/index.js`.
- */
+// English strings for UI components and pages.
+// Supports {{placeholder}} tokens for dynamic interpolation.
 export default {
   common: {
     loading: 'Loading',
