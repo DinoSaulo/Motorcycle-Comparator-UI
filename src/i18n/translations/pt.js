@@ -1,7 +1,5 @@
 /**
- * Portuguese strings. Same key shape as `en.js` — `translate()` falls back to English
- * for any key missing here, so this file only needs to stay in sync, not exhaustive.
- */
+ * Portuguese strings. Translated keys fall back to English if missing; stays in sync, not exhaustive. */
 export default {
   common: {
     loading: 'Carregando',

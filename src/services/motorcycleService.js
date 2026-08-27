@@ -88,7 +88,6 @@ export const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 
 // POST /motorcycles/{id}/image — multipart upload endpoint.
 export async function uploadMotorcycleImage(id, file, { onProgress } = {}) {
-export async function uploadMotorcycleImage(id, file, { onProgress } = {}) {
   const formData = new FormData();
   formData.append('file', file);
 

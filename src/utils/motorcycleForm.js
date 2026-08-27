@@ -1,18 +1,10 @@
 import { CATEGORIES } from '../services/motorcycleService';
 
 /**
- * Field descriptors for the admin form, declared once and rendered generically.
- *
- * Every `maxLength`, `min` and `max` here mirrors a bean-validation constraint on
- * `CreateMotorcycleRequest`. They exist to fail fast in the browser — the API still
- * validates everything, and its `violations` are what the user is ultimately shown.
- */
+ * Field descriptors for the admin form, rendered generically. Constraints mirror bean-validation on `CreateMotorcycleRequest`. */
 
 /**
- * `label` carries the English fallback used wherever no `t()` is in scope (e.g. the
- * validation summary below runs outside React); `labelKey` is what `FormField` renders
- * through `t()` so the field name follows the active language.
- */
+ * `label` is the English fallback; `labelKey` is rendered through `t()` for active language. */
 export const IDENTITY_FIELDS = [
   { name: 'brand', label: 'Brand', labelKey: 'fields.brand', type: 'text', required: true, maxLength: 60 },
   { name: 'model', label: 'Model', labelKey: 'fields.model', type: 'text', required: true, maxLength: 120 },
@@ -299,14 +291,7 @@ function blockPayload(fields, values) {
 }
 
 /**
- * Form state → `CreateMotorcycleRequest`.
- *
- * Blank inputs become `null`, never `""` or `0`: the API's `@Positive`/`@Size` constraints
- * reject an empty string, and a zero would be stored as a real measurement.
- *
- * `imageUrl` is carried through untouched. PUT is a full replacement, so omitting it would
- * silently clear an image that was uploaded through the separate multipart endpoint.
- */
+ * Form state → `CreateMotorcycleRequest`. Blank inputs become `null`; `imageUrl` persists unchanged. */
 export function toPayload(state) {
   const payload = { imageUrl: state.imageUrl ?? null };
 
@@ -332,11 +317,7 @@ export function toPayload(state) {
 }
 
 /**
- * Client-side gate for the few rules worth catching before a round trip.
- *
- * `t` is optional so this stays callable without a `LanguageProvider` in scope (tests,
- * scripts); it falls back to the English copy baked in below.
- */
+ * Client-side validation gate. `t` is optional; falls back to English if `LanguageProvider` not in scope. */
 export function validate(state, t = (key, vars) => FALLBACK_VALIDATION_MESSAGES[key](vars)) {
   const errors = {};
   if (!state.brand.trim()) errors.brand = t('validation.brandRequired');

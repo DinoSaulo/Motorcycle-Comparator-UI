@@ -62,7 +62,6 @@ function parseStoredSession(raw) {
 
 // Persists non-sensitive UI session metadata (username, roles, expiresAt) in sessionStorage.
 function saveSession({ username, roles, expiresAt }) {
-function saveSession({ username, roles, expiresAt }) {
   try {
     window.sessionStorage.setItem(SESSION_KEY, JSON.stringify({ username, roles, expiresAt }));
   } catch {

@@ -16,9 +16,8 @@ export default defineConfig({
     setupFiles: ['./src/testing/setupTests.js'],
     css: true,
     restoreMocks: true,
-    // A handful of admin-form integration tests drive several fields with real,
-    // char-by-char `userEvent.type()` across multiple mocked network round trips;
-    // the 5s default is occasionally too tight for that, independent of the app.
+    // Admin-form integration tests drive fields with `userEvent.type()` across mocked network;
+    // 5s default is occasionally too tight, so testTimeout is 15s.
     testTimeout: 15_000,
     coverage: {
       provider: 'v8',
