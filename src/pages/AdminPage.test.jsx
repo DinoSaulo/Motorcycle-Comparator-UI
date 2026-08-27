@@ -3,18 +3,23 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import AdminPage from './AdminPage';
 import { renderWithProviders, screen, waitFor, within } from '../testing/test-utils';
 import { mockApi } from '../testing/mockApi';
-import { buildMotorcycle, buildPage, buildSession } from '../testing/fixtures';
+import { getStoredToken } from '../services/api';
+import {
+  buildMotorcycle,
+  buildPage,
+  buildSession,
+  seedStoredSession,
+  SESSION_STORAGE_KEY as SESSION_KEY,
+} from '../testing/fixtures';
 
 /**
  * `/admin` gates itself on the session rather than on a route guard, so both branches
  * are reachable from the same render — signed out shows the login form, signed in the
- * dashboard. The session is seeded through storage, which is where `AuthProvider`
- * restores it from on mount.
+ * dashboard. `seedStoredSession` puts the app in the state a real login leaves behind,
+ * which is what `AuthProvider` restores from on mount.
  */
 
 const LANGUAGE_KEY = 'motorcycle-comparator.language';
-const SESSION_KEY = 'motorcycle-comparator.session';
-const TOKEN_KEY = 'motorcycle-comparator.token';
 
 beforeEach(() => {
   window.localStorage.setItem(LANGUAGE_KEY, 'en');
@@ -25,10 +30,7 @@ afterEach(() => {
 });
 
 function seedSession(overrides) {
-  const session = buildSession(overrides);
-  window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-  window.localStorage.setItem(TOKEN_KEY, session.accessToken);
-  return session;
+  return seedStoredSession(buildSession(overrides));
 }
 
 const mt07 = buildMotorcycle({ id: 1, brand: 'Yamaha', model: 'MT-07' });
@@ -135,7 +137,9 @@ describe('AdminPage authentication gate', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'This account does not have administrator permissions.',
     );
-    expect(window.localStorage.getItem(TOKEN_KEY)).toBeNull();
+    // The editor's token is real and was armed by `login()`; refusing the screen has to
+    // disarm it too, or the client keeps signing requests for a session the UI denies.
+    expect(getStoredToken()).toBeNull();
   });
 
   it('returns to the login form when the admin signs out', async () => {
@@ -149,7 +153,7 @@ describe('AdminPage authentication gate', () => {
     await user.click(screen.getByRole('button', { name: 'Sign out' }));
 
     expect(screen.getByRole('heading', { name: 'Administrator sign in' })).toBeInTheDocument();
-    expect(window.localStorage.getItem(SESSION_KEY)).toBeNull();
+    expect(window.sessionStorage.getItem(SESSION_KEY)).toBeNull();
   });
 });
 

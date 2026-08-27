@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import AdminMotorcycleFormPage from './AdminMotorcycleFormPage';
 import { renderWithProviders, screen, waitFor, within } from '../testing/test-utils';
 import { mockApi } from '../testing/mockApi';
-import { buildMotorcycle, buildSession } from '../testing/fixtures';
+import { buildMotorcycle, buildSession, seedStoredSession } from '../testing/fixtures';
 
 /**
  * Create and edit run through the same page, so both are driven here end to end:
@@ -12,8 +12,6 @@ import { buildMotorcycle, buildSession } from '../testing/fixtures';
  */
 
 const LANGUAGE_KEY = 'motorcycle-comparator.language';
-const SESSION_KEY = 'motorcycle-comparator.session';
-const TOKEN_KEY = 'motorcycle-comparator.token';
 
 beforeEach(() => {
   window.localStorage.setItem(LANGUAGE_KEY, 'en');
@@ -31,10 +29,7 @@ afterEach(() => {
 });
 
 function seedSession(overrides) {
-  const session = buildSession(overrides);
-  window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-  window.localStorage.setItem(TOKEN_KEY, session.accessToken);
-  return session;
+  return seedStoredSession(buildSession(overrides));
 }
 
 /** The whole admin area, so a redirect after saving lands somewhere real. */

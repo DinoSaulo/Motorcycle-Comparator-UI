@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, screen, waitFor } from '../../testing/test-utils';
 import { buildSession } from '../../testing/fixtures';
-import { ApiRequestError } from '../../services/api';
+import { ApiRequestError, getStoredToken } from '../../services/api';
 import { login } from '../../services/authService';
 import LoginForm from './LoginForm';
 
@@ -80,7 +80,7 @@ describe('LoginForm', () => {
     await fillAndSubmit(user);
 
     await screen.findByRole('alert');
-    expect(window.localStorage.getItem('motorcycle-comparator.token')).toBeNull();
+    expect(getStoredToken()).toBeNull();
   });
 
   it('treats a session with no roles at all as a failure', async () => {

@@ -3,6 +3,10 @@
  * backend DTOs. Kept in one place so every test file compares against the same
  * shapes instead of hand-rolling slightly different ones.
  */
+import { setStoredToken } from '../services/api';
+
+/** Where `authService` keeps the non-sensitive half of a session. */
+export const SESSION_STORAGE_KEY = 'motorcycle-comparator.session';
 
 export function buildMotorcycle(overrides = {}) {
   return {
@@ -111,6 +115,28 @@ export function buildSession(overrides = {}) {
     roles: ['ROLE_ADMIN'],
     ...overrides,
   };
+}
+
+/**
+ * Leaves the app in the state a real `login()` does: display metadata in `sessionStorage`,
+ * bearer token in memory.
+ *
+ * Both halves are required. Since the token stopped being persisted (SEC-001) storage alone
+ * restores nothing — which is precisely the reload behaviour `restoreSession` now enforces —
+ * so any test that wants an authenticated render has to seed the token too.
+ */
+export function seedStoredSession(session = buildSession()) {
+  const { username, roles, expiresAt, accessToken } = session;
+  try {
+    window.sessionStorage.setItem(
+      SESSION_STORAGE_KEY,
+      JSON.stringify({ username, roles, expiresAt }),
+    );
+  } catch {
+    /* mirrors authService: a storage failure must not fail the test setup */
+  }
+  setStoredToken(accessToken);
+  return session;
 }
 
 export function buildApiError({ message = 'Something went wrong', status = 400, violations = [], path = '/api/v1/x' } = {}) {

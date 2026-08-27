@@ -12,9 +12,6 @@ function t(key, vars) {
   return translate(getStoredLanguage() ?? DEFAULT_LANGUAGE, key, vars);
 }
 
-/** Where the bearer token lives between reloads. Writes are admin-only, reads never need it. */
-export const AUTH_TOKEN_KEY = 'motorcycle-comparator.token';
-
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || DEFAULT_BASE_URL,
   timeout: 15_000,
@@ -68,26 +65,26 @@ export class ApiRequestError extends Error {
   }
 }
 
+/**
+ * The bearer token lives here and nowhere else.
+ *
+ * A module-level variable is reachable only through this module's closure, whereas
+ * anything in `localStorage`/`sessionStorage` is readable by *any* script that ever runs
+ * on this origin — a future XSS bug, a compromised dependency, a malicious extension —
+ * and can be exfiltrated wholesale in one line. Keeping the token out of Web Storage is
+ * the point of this design, not an implementation detail (SEC-001).
+ *
+ * The price is that the token dies with the page: see `restoreSession` in
+ * `authService.js` for the reload behaviour that follows from it.
+ */
+let bearerToken = null;
+
 export function getStoredToken() {
-  try {
-    return window.localStorage.getItem(AUTH_TOKEN_KEY);
-  } catch {
-    // Private browsing and blocked site data both throw here; an anonymous
-    // visitor still gets the full read-only catalogue, so this is not fatal.
-    return null;
-  }
+  return bearerToken;
 }
 
 export function setStoredToken(token) {
-  try {
-    if (token) {
-      window.localStorage.setItem(AUTH_TOKEN_KEY, token);
-    } else {
-      window.localStorage.removeItem(AUTH_TOKEN_KEY);
-    }
-  } catch {
-    /* see getStoredToken */
-  }
+  bearerToken = token || null;
 }
 
 api.interceptors.request.use((config) => {

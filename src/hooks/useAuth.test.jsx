@@ -2,9 +2,8 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthProvider, useAuth } from './useAuth';
 import { mockApi } from '../testing/mockApi';
-import { buildSession } from '../testing/fixtures';
-
-const SESSION_KEY = 'motorcycle-comparator.session';
+import { buildSession, seedStoredSession, SESSION_STORAGE_KEY as SESSION_KEY } from '../testing/fixtures';
+import { getStoredToken, setStoredToken } from '../services/api';
 
 function wrapper({ children }) {
   return <AuthProvider>{children}</AuthProvider>;
@@ -31,12 +30,26 @@ describe('useAuth', () => {
     expect(result.current.username).toBeNull();
   });
 
-  it('restores a valid stored session on mount', () => {
-    window.localStorage.setItem(SESSION_KEY, JSON.stringify(buildSession()));
+  it('restores a valid session on mount while the token is still in memory', () => {
+    seedStoredSession();
     const { result } = renderHook(() => useAuth(), { wrapper });
     expect(result.current.isAuthenticated).toBe(true);
     expect(result.current.isAdmin).toBe(true);
     expect(result.current.username).toBe('admin');
+  });
+
+  it('starts unauthenticated after a reload, since the token does not survive one', () => {
+    // Stored metadata outlives the page, the in-memory token does not — the deliberate
+    // SEC-001 trade-off, asserted here so nobody "fixes" the reload behaviour by putting
+    // the token back into storage.
+    seedStoredSession();
+    setStoredToken(null);
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    expect(result.current.isAuthenticated).toBe(false);
+    expect(result.current.isAdmin).toBe(false);
+    expect(window.sessionStorage.getItem(SESSION_KEY)).toBeNull();
   });
 
   it('signs in and updates state from the login response', async () => {
@@ -64,18 +77,18 @@ describe('useAuth', () => {
   });
 
   it('signs out and clears the session', () => {
-    window.localStorage.setItem(SESSION_KEY, JSON.stringify(buildSession()));
+    seedStoredSession();
     const { result } = renderHook(() => useAuth(), { wrapper });
 
     act(() => result.current.signOut());
 
     expect(result.current.isAuthenticated).toBe(false);
-    expect(window.localStorage.getItem(SESSION_KEY)).toBeNull();
+    expect(window.sessionStorage.getItem(SESSION_KEY)).toBeNull();
+    expect(getStoredToken()).toBeNull();
   });
 
   it('auto signs out once the token lapses', async () => {
-    const session = buildSession({ expiresAt: new Date(Date.now() + 5000).toISOString() });
-    window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    seedStoredSession(buildSession({ expiresAt: new Date(Date.now() + 5000).toISOString() }));
     const { result } = renderHook(() => useAuth(), { wrapper });
 
     expect(result.current.isAuthenticated).toBe(true);
@@ -93,10 +106,19 @@ describe('useAuth', () => {
     expect(() => unmount()).not.toThrow();
   });
 
-  it('does not schedule an expiry timer for an unparsable expiresAt', () => {
-    window.localStorage.setItem(SESSION_KEY, JSON.stringify(buildSession({ expiresAt: 'not-a-date' })));
+  it('signs out a session whose expiresAt cannot be parsed', async () => {
+    // SEC-002: `hasExpired` reads an unusable expiry as expired, so the provider drops the
+    // session instead of holding it in state with no timer and no way to lapse.
+    const session = buildSession({ expiresAt: 'not-a-date' });
+    mockApi.onPost('/auth/login').reply(200, session);
     const { result } = renderHook(() => useAuth(), { wrapper });
-    // hasExpired() treats an unparsable date as "not expired", so the session restores.
-    expect(result.current.session).toBeTruthy();
+
+    await act(async () => {
+      await result.current.signIn({ username: 'admin', password: 'secret' });
+    });
+
+    await waitFor(() => expect(result.current.session).toBeNull());
+    expect(result.current.isAuthenticated).toBe(false);
+    expect(getStoredToken()).toBeNull();
   });
 });

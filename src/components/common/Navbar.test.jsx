@@ -1,12 +1,10 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import { renderWithProviders, screen } from '../../testing/test-utils';
-import { buildSession } from '../../testing/fixtures';
+import { buildSession, seedStoredSession } from '../../testing/fixtures';
 import Navbar from './Navbar';
 
-const SESSION_KEY = 'motorcycle-comparator.session';
-
 function signIn(session = buildSession()) {
-  window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  seedStoredSession(session);
 }
 
 describe('Navbar', () => {

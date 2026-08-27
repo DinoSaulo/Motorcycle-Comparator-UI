@@ -6,9 +6,10 @@ const AuthContext = createContext(null);
 /**
  * Holds the administrator session for the app.
  *
- * The session is restored from storage on mount so a reload does not drop the admin back to
- * the login screen, and a timer signs them out the moment the token lapses rather than
- * letting them fill in a long form that the API would reject on submit.
+ * `restoreSession()` runs on mount, but since the token is memory-only it can only ever
+ * return a session inside the same page load — a reload signs the admin out by design
+ * (see `authService.restoreSession`). A timer signs them out the moment the token lapses
+ * rather than letting them fill in a long form that the API would reject on submit.
  */
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(restoreSession);
@@ -25,20 +26,22 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (!session?.expiresAt) return undefined;
+    if (!session) return undefined;
 
-    const msRemaining = Date.parse(session.expiresAt) - Date.now();
-    if (Number.isNaN(msRemaining)) return undefined;
-    if (msRemaining <= 0) {
+    // `hasExpired` also covers a missing or unparsable `expiresAt`, so a session the UI
+    // would never treat as authenticated is actively signed out instead of lingering in
+    // state as neither signed in nor signed out.
+    if (hasExpired(session.expiresAt)) {
       signOut();
       return undefined;
     }
 
     // setTimeout saturates above ~24.8 days; the token's 2h TTL is nowhere near that,
     // but clamping keeps a misconfigured TTL from firing the timer immediately.
+    const msRemaining = Date.parse(session.expiresAt) - Date.now();
     const timer = window.setTimeout(signOut, Math.min(msRemaining, 2_147_483_647));
     return () => window.clearTimeout(timer);
-  }, [session?.expiresAt, signOut]);
+  }, [session, signOut]);
 
   const value = useMemo(
     () => ({

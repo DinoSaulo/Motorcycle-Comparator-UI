@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import axios from 'axios';
 import {
   ApiRequestError,
-  AUTH_TOKEN_KEY,
   api,
   getApiOrigin,
   getStoredToken,
@@ -69,31 +68,35 @@ describe('token storage', () => {
     expect(getStoredToken()).toBeNull();
   });
 
-  it('round-trips a token', () => {
+  it('round-trips a token in memory only', () => {
     setStoredToken('abc123');
     expect(getStoredToken()).toBe('abc123');
-    expect(window.localStorage.getItem(AUTH_TOKEN_KEY)).toBe('abc123');
+    // SEC-001: no Web Storage area is written, so nothing survives the page — and nothing
+    // is there for another script on this origin to read.
+    expect(Object.keys(window.localStorage)).toHaveLength(0);
+    expect(Object.keys(window.sessionStorage)).toHaveLength(0);
   });
 
   it('removes the token when set to a falsy value', () => {
     setStoredToken('abc123');
     setStoredToken(null);
     expect(getStoredToken()).toBeNull();
+    setStoredToken('abc123');
+    setStoredToken(undefined);
+    expect(getStoredToken()).toBeNull();
+    setStoredToken('abc123');
+    setStoredToken('');
+    expect(getStoredToken()).toBeNull();
   });
 
-  it('does not throw when storage access throws on read', () => {
+  it('keeps working when Web Storage is unavailable altogether', () => {
+    // Private browsing and blocked site data make every storage call throw; the token has
+    // no dependency on storage left, so this cannot break authentication.
     const spy = vi.spyOn(window.localStorage.__proto__, 'getItem').mockImplementation(() => {
       throw new Error('blocked');
     });
-    expect(getStoredToken()).toBeNull();
-    spy.mockRestore();
-  });
-
-  it('does not throw when storage access throws on write', () => {
-    const spy = vi.spyOn(window.localStorage.__proto__, 'setItem').mockImplementation(() => {
-      throw new Error('blocked');
-    });
-    expect(() => setStoredToken('x')).not.toThrow();
+    setStoredToken('abc123');
+    expect(getStoredToken()).toBe('abc123');
     spy.mockRestore();
   });
 });

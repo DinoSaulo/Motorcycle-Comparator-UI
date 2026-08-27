@@ -4,7 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
 import { mockApi } from './testing/mockApi';
-import { buildMotorcycle, buildPage, buildSession } from './testing/fixtures';
+import { buildMotorcycle, buildPage, seedStoredSession } from './testing/fixtures';
 
 /**
  * `App` supplies its own `LanguageProvider`/`AuthProvider`, so these tests wrap it in a
@@ -12,8 +12,6 @@ import { buildMotorcycle, buildPage, buildSession } from './testing/fixtures';
  */
 
 const LANGUAGE_KEY = 'motorcycle-comparator.language';
-const SESSION_KEY = 'motorcycle-comparator.session';
-const TOKEN_KEY = 'motorcycle-comparator.token';
 
 beforeEach(() => {
   window.localStorage.setItem(LANGUAGE_KEY, 'en');
@@ -37,9 +35,7 @@ function stubCatalogue(page = buildPage([buildMotorcycle()])) {
 }
 
 function seedAdminSession() {
-  const session = buildSession();
-  window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-  window.localStorage.setItem(TOKEN_KEY, session.accessToken);
+  return seedStoredSession();
 }
 
 describe('App shell', () => {

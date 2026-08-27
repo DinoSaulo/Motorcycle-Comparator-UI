@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import AppRoutes from './AppRoutes';
 import { renderWithProviders, screen, waitFor } from '../testing/test-utils';
 import { mockApi } from '../testing/mockApi';
-import { buildComparison, buildMotorcycle, buildPage, buildSession } from '../testing/fixtures';
+import { buildComparison, buildMotorcycle, buildPage, seedStoredSession } from '../testing/fixtures';
 
 /**
  * Route-level integration. Every page except the catalogue is behind `React.lazy`, so
@@ -10,8 +10,6 @@ import { buildComparison, buildMotorcycle, buildPage, buildSession } from '../te
  */
 
 const LANGUAGE_KEY = 'motorcycle-comparator.language';
-const SESSION_KEY = 'motorcycle-comparator.session';
-const TOKEN_KEY = 'motorcycle-comparator.token';
 
 beforeEach(() => {
   window.localStorage.setItem(LANGUAGE_KEY, 'en');
@@ -27,9 +25,7 @@ function stubCatalogue() {
 }
 
 function seedAdminSession() {
-  const session = buildSession();
-  window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-  window.localStorage.setItem(TOKEN_KEY, session.accessToken);
+  return seedStoredSession();
 }
 
 describe('AppRoutes', () => {
