@@ -52,6 +52,39 @@ jobs:
       - name: Run integration tests
         run: npm run test:integration
 
+  sonarqube:
+    name: SonarQube Cloud
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          # Sonar reads git history to decide what counts as new code and who authored an
+          # issue. A shallow clone leaves it blind to both, so the New Code quality gate
+          # silently measures the wrong thing.
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Runs the suite again rather than reusing the unit-tests job, because the scan needs
+      # coverage/lcov.info in its own workspace. Passing it between jobs would mean an
+      # upload/download artifact pair for a suite that takes well under a minute.
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v8.2.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+
   build:
     name: Build Application
     runs-on: ubuntu-latest
