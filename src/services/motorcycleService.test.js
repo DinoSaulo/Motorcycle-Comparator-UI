@@ -88,6 +88,14 @@ describe('compareMotorcycles', () => {
     expect(COMPARISON_MIN).toBe(2);
     expect(COMPARISON_MAX).toBe(4);
   });
+
+  it('refuses to call the endpoint outside those bounds', async () => {
+    await expect(compareMotorcycles([1])).rejects.toThrow('compareMotorcycles requires 2-4 ids');
+    await expect(compareMotorcycles([1, 2, 3, 4, 5])).rejects.toThrow(
+      'compareMotorcycles requires 2-4 ids',
+    );
+    expect(mockApi.history.get).toHaveLength(0);
+  });
 });
 
 describe('admin mutations', () => {
