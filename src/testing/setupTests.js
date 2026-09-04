@@ -1,18 +1,24 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterEach, beforeEach, vi } from 'vitest';
+import { vi } from 'vitest';
 import { setStoredToken } from '../services/api';
 
-// Clears local/session storage and reset memory bearer tokens before each test run.
-beforeEach(() => {
-  window.localStorage.clear();
-  window.sessionStorage.clear();
-  setStoredToken(null);
-});
+// Setup global test fixtures with storage cleanup and token reset.
+// Called at import time by vitest's globals mode.
+(() => {
+  // Defer hook registration until test context is ready
+  if (typeof beforeEach !== 'undefined') {
+    beforeEach(() => {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+      setStoredToken(null);
+    });
 
-afterEach(() => {
-  cleanup();
-});
+    afterEach(() => {
+      cleanup();
+    });
+  }
+})();
 
 // jsdom does not implement matchMedia, and Navbar/LanguageSwitcher-adjacent code
 // (or any future Tailwind-driven responsive check) may probe it.
