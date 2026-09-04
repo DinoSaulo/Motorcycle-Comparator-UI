@@ -3,5 +3,13 @@
     "frontend-design@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
     "claude-security@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "cascade-code-languages-misc-1": {
+      "source": {
+        "source": "github",
+        "repo": "joshuarweaver/cascade-code-languages-misc-1"
+      }
+    }
   }
 }
