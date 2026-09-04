@@ -84,3 +84,35 @@ export function formatDisplayName(motorcycle) {
 export function formatModelYear(modelYear) {
   return isBlank(modelYear) ? EMPTY_VALUE : String(modelYear);
 }
+
+// Formats an integer without decimals; em dash on null/undefined.
+export function formatNumber(value) {
+  if (isBlank(value)) return EMPTY_VALUE;
+  const numeric = Number(value);
+  return Number.isNaN(numeric) ? EMPTY_VALUE : Math.round(numeric).toString();
+}
+
+// Converts a 0–1 ratio to percentage (e.g., 0.75 → "75%"); em dash on null/undefined.
+export function formatPercent(ratio) {
+  if (isBlank(ratio)) return EMPTY_VALUE;
+  const numeric = Number(ratio);
+  if (Number.isNaN(numeric)) return EMPTY_VALUE;
+  return `${Math.round(numeric * 100)}%`;
+}
+
+// Parses ISO 8601 instant to "YYYY-MM-DD at HH:MM UTC"; em dash on null/invalid.
+export function formatDateTime(isoString) {
+  if (isBlank(isoString)) return EMPTY_VALUE;
+  try {
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) return EMPTY_VALUE;
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const hour = String(date.getUTCHours()).padStart(2, '0');
+    const minute = String(date.getUTCMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day} at ${hour}:${minute} UTC`;
+  } catch {
+    return EMPTY_VALUE;
+  }
+}
