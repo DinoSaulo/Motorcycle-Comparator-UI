@@ -246,6 +246,18 @@ describe('AdminPage catalogue table', () => {
     expect(link).toHaveAttribute('href', '/admin/motorcycles/1');
   });
 
+  it('links to the catalogue insights screen', async () => {
+    mockApi.onGet('/motorcycles').reply(200, buildPage([mt07]));
+
+    renderWithProviders(<AdminPage />, { route: '/admin' });
+    await screen.findByRole('table');
+
+    expect(screen.getByRole('link', { name: 'Catalogue insights' })).toHaveAttribute(
+      'href',
+      '/admin/stats',
+    );
+  });
+
   it('links to the create screen', async () => {
     mockApi.onGet('/motorcycles').reply(200, buildPage([mt07]));
 

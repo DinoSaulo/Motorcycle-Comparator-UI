@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LogOut, Plus, ShieldCheck } from 'lucide-react';
+import { BarChart3, LogOut, Plus, ShieldCheck } from 'lucide-react';
 import LoginForm from '../components/admin/LoginForm';
 import AdminMotorcycleTable from '../components/admin/AdminMotorcycleTable';
 import Modal from '../components/common/Modal';
@@ -82,6 +82,13 @@ function AdminDashboard({ username, onSignOut }) {
         </div>
 
         <div className="flex items-center gap-2">
+          <Link
+            to="/admin/stats"
+            className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+          >
+            <BarChart3 className="size-4" aria-hidden="true" />
+            {t('admin.stats.navLink')}
+          </Link>
           <Link
             to="/admin/motorcycles/new"
             className="inline-flex items-center gap-2 rounded-lg bg-accent-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-700"
