@@ -12,6 +12,7 @@ const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 // The admin bundle carries the whole edit form and never loads for a normal visitor.
 const AdminPage = lazy(() => import('../pages/AdminPage'));
 const AdminMotorcycleFormPage = lazy(() => import('../pages/AdminMotorcycleFormPage'));
+const AdminStatsPage = lazy(() => import('../pages/AdminStatsPage'));
 
 export default function AppRoutes() {
   return (
@@ -29,6 +30,7 @@ export default function AppRoutes() {
         {/* Each admin screen gates itself on the session, so there is no separate
             login route to bookmark or get redirected back from. */}
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/stats" element={<AdminStatsPage />} />
         <Route path="/admin/motorcycles/new" element={<AdminMotorcycleFormPage />} />
         <Route path="/admin/motorcycles/:id" element={<AdminMotorcycleFormPage />} />
         <Route path="*" element={<NotFoundPage />} />
