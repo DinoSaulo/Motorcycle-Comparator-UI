@@ -128,6 +128,33 @@ export default {
     colPrice: 'Price',
     colActions: 'Actions',
 
+    stats: {
+      navLink: 'Catalogue insights',
+      pageTitle: 'Catalogue insights',
+      lastUpdated: 'Last updated',
+      noData: 'No data yet.',
+      byBrand: 'By brand',
+      byCategory: 'By category',
+      byModelYear: 'By model year',
+      totalMotorcycles: 'Total motorcycles',
+      pricedCount: 'Motorcycles with price',
+      minPrice: 'Minimum price',
+      avgPrice: 'Average price',
+      maxPrice: 'Maximum price',
+      motorcycle: {
+        fields: 'Motorcycle core fields',
+      },
+      engine: {
+        title: 'Engine specifications',
+        coverage: 'Rows with specs',
+      },
+      dimensions: {
+        title: 'Dimensions & weight',
+        coverage: 'Rows with data',
+      },
+      additionalSpecs: 'Additional specifications coverage',
+    },
+
     form: {
       editMotorcycle: 'Edit motorcycle',
       newMotorcycle: 'New motorcycle',
@@ -236,6 +263,9 @@ export default {
     dryWeightKg: 'Dry weight',
     fuelCapacityL: 'Fuel capacity',
     payloadKg: 'Payload',
+    imageUrl: 'Image',
+    engine: 'Engine',
+    dimension: 'Dimensions',
   },
 
   validation: {

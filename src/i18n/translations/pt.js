@@ -128,6 +128,33 @@ export default {
     colPrice: 'Preço',
     colActions: 'Ações',
 
+    stats: {
+      navLink: 'Estatísticas do catálogo',
+      pageTitle: 'Estatísticas do catálogo',
+      lastUpdated: 'Última atualização',
+      noData: 'Sem dados ainda.',
+      byBrand: 'Por marca',
+      byCategory: 'Por categoria',
+      byModelYear: 'Por ano do modelo',
+      totalMotorcycles: 'Total de motos',
+      pricedCount: 'Motos com preço',
+      minPrice: 'Preço mínimo',
+      avgPrice: 'Preço médio',
+      maxPrice: 'Preço máximo',
+      motorcycle: {
+        fields: 'Campos principais da moto',
+      },
+      engine: {
+        title: 'Especificações do motor',
+        coverage: 'Linhas com especificações',
+      },
+      dimensions: {
+        title: 'Dimensões e peso',
+        coverage: 'Linhas com dados',
+      },
+      additionalSpecs: 'Cobertura de especificações adicionais',
+    },
+
     form: {
       editMotorcycle: 'Editar moto',
       newMotorcycle: 'Nova moto',
@@ -236,6 +263,9 @@ export default {
     dryWeightKg: 'Peso seco',
     fuelCapacityL: 'Capacidade do tanque',
     payloadKg: 'Capacidade de carga',
+    imageUrl: 'Imagem',
+    engine: 'Motor',
+    dimension: 'Dimensões',
   },
 
   validation: {
